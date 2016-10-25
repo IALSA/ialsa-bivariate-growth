@@ -1,0 +1,159 @@
+TITLE:
+Script produced from the prototype in ./sandbox/syntax-creator/
+DATA:
+File = wide-dataset.dat;
+VARIABLE:
+Names are
+ id age_bl age_c70 htm htm_c160 wtkg msex race educ edu_c7 dementia_ever
+    age_at_visit_0 age_at_visit_1 age_at_visit_2 age_at_visit_3 age_at_visit_4
+    age_at_visit_5 age_at_visit_6 age_at_visit_7 age_at_visit_8 age_at_visit_9
+    age_at_visit_10 age_at_visit_11 age_at_visit_12 age_at_visit_13 age_at_visit_14
+    age_at_visit_15 age_at_visit_16 time_since_bl_0 time_since_bl_1 time_since_bl_2
+    time_since_bl_3 time_since_bl_4 time_since_bl_5 time_since_bl_6 time_since_bl_7
+    time_since_bl_8 time_since_bl_9 time_since_bl_10 time_since_bl_11
+    time_since_bl_12 time_since_bl_13 time_since_bl_14 time_since_bl_15
+    time_since_bl_16 dementia_0 dementia_1 dementia_2 dementia_3 dementia_4
+    dementia_5 dementia_6 dementia_7 dementia_8 dementia_9 dementia_10 dementia_11
+    dementia_12 dementia_13 dementia_14 dementia_15 dementia_16 cts_bname_0
+    cts_bname_1 cts_bname_2 cts_bname_3 cts_bname_4 cts_bname_5 cts_bname_6
+    cts_bname_7 cts_bname_8 cts_bname_9 cts_bname_10 cts_bname_11 cts_bname_12
+    cts_bname_13 cts_bname_14 cts_bname_15 cts_bname_16 cts_catflu_0 cts_catflu_1
+    cts_catflu_2 cts_catflu_3 cts_catflu_4 cts_catflu_5 cts_catflu_6 cts_catflu_7
+    cts_catflu_8 cts_catflu_9 cts_catflu_10 cts_catflu_11 cts_catflu_12
+    cts_catflu_13 cts_catflu_14 cts_catflu_15 cts_catflu_16 cts_nccrtd_0
+    cts_nccrtd_1 cts_nccrtd_2 cts_nccrtd_3 cts_nccrtd_4 cts_nccrtd_5 cts_nccrtd_6
+    cts_nccrtd_7 cts_nccrtd_8 cts_nccrtd_9 cts_nccrtd_10 cts_nccrtd_11 cts_nccrtd_12
+    cts_nccrtd_13 cts_nccrtd_14 cts_nccrtd_15 cts_nccrtd_16 fev_0 fev_1 fev_2
+    fev_3 fev_4 fev_5 fev_6 fev_7 fev_8 fev_9 fev_10 fev_11 fev_12 fev_13 fev_14
+    fev_15 fev_16 gait_speed_0 gait_speed_1 gait_speed_2 gait_speed_3 gait_speed_4
+    gait_speed_5 gait_speed_6 gait_speed_7 gait_speed_8 gait_speed_9 gait_speed_10
+    gait_speed_11 gait_speed_12 gait_speed_13 gait_speed_14 gait_speed_15
+    gait_speed_16 gripavg_0 gripavg_1 gripavg_2 gripavg_3 gripavg_4 gripavg_5
+    gripavg_6 gripavg_7 gripavg_8 gripavg_9 gripavg_10 gripavg_11 gripavg_12
+    gripavg_13 gripavg_14 gripavg_15 gripavg_16
+	;
+Missing are all (-9999);
+USEVAR are
+	!define the variables used in the analysis
+	! covariates used in the model
+age_c70
+htm_c160
+edu_c7	
+	!estimated timepoints
+time1
+time2
+time3
+time4
+time5
+	!modelled timepoints of process (A)
+a1
+a2
+a3
+a4
+a5 
+	!modelled timepoints of process (B)
+b1
+b2
+b3
+b4
+b5 
+;
+TSCORES are
+	!estimated timepoints
+time1
+time2
+time3
+time4
+time5;
+USEOBSERVATIONS are
+	!select a subset of observations
+msex EQ msex EQ 1 
+and
+dementia_ever NE 1
+;
+DEFINE:
+	! assign variables to the process (A)
+a1=gripavg_1;
+a2=gripavg_2;
+a3=gripavg_3;
+a4=gripavg_4;
+a5=gripavg_5;
+! assign variables to the process (B)
+b1=cts_nccrtd_1;
+b2=cts_nccrtd_2;
+b3=cts_nccrtd_3;
+b4=cts_nccrtd_4;
+b5=cts_nccrtd_5;
+	!assign variables to time points
+time1=time_since_bl_1;
+time2=time_since_bl_2;
+time3=time_since_bl_3;
+time4=time_since_bl_4;
+time5=time_since_bl_5;
+	
+ANALYSIS:
+TYPE = RANDOM;
+COVERAGE=.00;
+MODEL:
+	!first-level equation
+	! process (A)
+! alternatively: ia sa | a1 - a5 AT time1 - time5;
+ia sa | a1 AT time1;
+ia sa | a2 AT time2;
+ia sa | a3 AT time3;
+ia sa | a4 AT time4;
+ia sa | a5 AT time5;
+	! process (B)
+!alternatively: ib sb | b1 - b5 AT time1 - time5;
+ib sb | b1 AT time1;
+ib sb | b2 AT time2;
+ib sb | b3 AT time3;
+ib sb | b4 AT time4;
+ib sb | b5 AT time5;
+	!variance of the first-level terms
+ia (v_ia);
+sa (v_sa);
+ib (v_ib);
+sb (v_sb);
+	!covariance among first-level terms
+ia WITH sa (c_iasb);
+ia WITH ib (c_iaib);
+ia WITH sb (c_iasb);
+sa WITH ib (c_saib);
+sa WITH sb (c_sasb);
+ib WITH sb (c_iasb);
+	!second-level equation
+ia sa ib sb ON age_c70
+htm_c160
+edu_c7;
+	!residual means of process (A)
+a1 (res_a);
+a2 (res_a);
+a3 (res_a);
+a4 (res_a);
+a5 (res_a);
+	!residual means of process (B)
+b1 (res_b);
+b2 (res_b);
+b3 (res_b);
+b4 (res_b);
+b5 (res_b);
+	!Paired covariances constrained to be equal across t
+a1 pwith b1 (res_cov);
+a2 pwith b2 (res_cov);
+a3 pwith b3 (res_cov);
+a4 pwith b4 (res_cov);
+a5 pwith b5 (res_cov);
+
+!a1 a2 a3 a4 a5 pwith b1 b2 b3 b4 b5(res_cov);
+MODEL CONSTRAINT:
+	!assigns labels to new parameters;
+NEW r_iaib;
+NEW r_sasb;
+NEW r_res_ab;
+	!compute confidence intervals for correlation coefficients; 
+r_iaib = c_iaib/((v_ia**0.5)*(v_ib**0.5));
+r_sasb = c_sasb/((v_sa**0.5)*(v_sb**0.5));
+r_res_ab = res_cov/((res_a**0.5)*(res_b**0.5));
+OUTPUT: sampstat cinterval;
+PLOT: Type is Plot1 Plot2 Plot3;

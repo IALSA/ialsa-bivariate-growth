@@ -1,0 +1,57 @@
+##############
+# R and RStudio files.
+.Rhistory
+.RData
+.Rproj.user
+.Rproj.user/
+
+##############
+# Protected Information; see cubuspl42's answer in http://stackoverflow.com/questions/2415873/exceptions-in-gitignore
+/unshared_material/*
+/data_unshared/*
+/data-unshared/*
+/data/unshared/*
+/sandbox/syntax-creator/data/unshared/*
+/sandbox/syntax-creator/outputs/*/*.dat
+
+
+
+# Dataset Exceptions
+!utility/package-dependency-list.csv
+
+# Keep the README files in the unshared directories.  They provide documentation, and also force the directories to be created on other machines.
+# Depending on how you do it, you might need to add w/ the command line (eg, git add -f ./data_unshared/raw/README.md)
+!README.md
+!data_unshared/contents.md
+!data_unshared/raw/README.md
+!data_unshared/derived/README.md
+!data/unshared/contents.md
+!data/unshared/raw/README.md
+!data/unshared/derived/README.md
+
+##############
+# Misc files
+
+# READMEs created by knitr.  The markdown file should be the only version for a given directory.
+README.html
+
+# Unnecessary files from knitr reports
+
+##############
+# Windows
+# Cached small image files
+Thumbs.db
+# Folder config file
+Desktop.ini
+ialsa-2015-portland-stencil.Rproj
+
+##############
+# Exceptions
+!/data/README.md
+!/data/*/README.md
+!/data/*/*/README.md
+!/data/*/*/*/README.md
+!/data/*/*/*/*/README.md
+manipulation/translator-support/outputs/grip-numbercomp/long-dataset.dat
+*.dat
+*.gh5

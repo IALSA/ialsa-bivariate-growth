@@ -1,0 +1,842 @@
+Mplus VERSION 7.3
+MUTHEN & MUTHEN
+03/15/2016   4:25 PM
+
+INPUT INSTRUCTIONS
+
+  TITLE:
+  Script produced from the prototype in ./sandbox/syntax-creator/
+  DATA:
+  File = wide-dataset.dat;
+  VARIABLE:
+  Names are
+   id age_bl age_c70 htm htm_c160 wtkg msex race educ edu_c7 dementia_ever
+      age_at_visit_0 age_at_visit_1 age_at_visit_2 age_at_visit_3 age_at_visit_4
+      age_at_visit_5 age_at_visit_6 age_at_visit_7 age_at_visit_8 age_at_visit_9
+      age_at_visit_10 age_at_visit_11 age_at_visit_12 age_at_visit_13 age_at_visit_14
+      age_at_visit_15 age_at_visit_16 time_since_bl_0 time_since_bl_1 time_since_bl_2
+      time_since_bl_3 time_since_bl_4 time_since_bl_5 time_since_bl_6 time_since_bl_7
+      time_since_bl_8 time_since_bl_9 time_since_bl_10 time_since_bl_11
+      time_since_bl_12 time_since_bl_13 time_since_bl_14 time_since_bl_15
+      time_since_bl_16 dementia_0 dementia_1 dementia_2 dementia_3 dementia_4
+      dementia_5 dementia_6 dementia_7 dementia_8 dementia_9 dementia_10 dementia_11
+      dementia_12 dementia_13 dementia_14 dementia_15 dementia_16 cts_bname_0
+      cts_bname_1 cts_bname_2 cts_bname_3 cts_bname_4 cts_bname_5 cts_bname_6
+      cts_bname_7 cts_bname_8 cts_bname_9 cts_bname_10 cts_bname_11 cts_bname_12
+      cts_bname_13 cts_bname_14 cts_bname_15 cts_bname_16 cts_catflu_0 cts_catflu_1
+      cts_catflu_2 cts_catflu_3 cts_catflu_4 cts_catflu_5 cts_catflu_6 cts_catflu_7
+      cts_catflu_8 cts_catflu_9 cts_catflu_10 cts_catflu_11 cts_catflu_12
+      cts_catflu_13 cts_catflu_14 cts_catflu_15 cts_catflu_16 cts_nccrtd_0
+      cts_nccrtd_1 cts_nccrtd_2 cts_nccrtd_3 cts_nccrtd_4 cts_nccrtd_5 cts_nccrtd_6
+      cts_nccrtd_7 cts_nccrtd_8 cts_nccrtd_9 cts_nccrtd_10 cts_nccrtd_11 cts_nccrtd_12
+      cts_nccrtd_13 cts_nccrtd_14 cts_nccrtd_15 cts_nccrtd_16 fev_0 fev_1 fev_2
+      fev_3 fev_4 fev_5 fev_6 fev_7 fev_8 fev_9 fev_10 fev_11 fev_12 fev_13 fev_14
+      fev_15 fev_16 gait_speed_0 gait_speed_1 gait_speed_2 gait_speed_3 gait_speed_4
+      gait_speed_5 gait_speed_6 gait_speed_7 gait_speed_8 gait_speed_9 gait_speed_10
+      gait_speed_11 gait_speed_12 gait_speed_13 gait_speed_14 gait_speed_15
+      gait_speed_16 gripavg_0 gripavg_1 gripavg_2 gripavg_3 gripavg_4 gripavg_5
+      gripavg_6 gripavg_7 gripavg_8 gripavg_9 gripavg_10 gripavg_11 gripavg_12
+      gripavg_13 gripavg_14 gripavg_15 gripavg_16
+  	;
+  Missing are all (-9999);
+  USEVAR are
+  	!define the variables used in the analysis
+  	! covariates used in the model
+  age_c70
+  htm_c160
+  edu_c7	
+  	!estimated timepoints
+  time1
+  time2
+  time3
+  time4
+  time5
+  	!modelled timepoints of process (A)
+  a1
+  a2
+  a3
+  a4
+  a5
+  	!modelled timepoints of process (B)
+  b1
+  b2
+  b3
+  b4
+  b5
+  ;
+  TSCORES are
+  	!estimated timepoints
+  time1
+  time2
+  time3
+  time4
+  time5;
+  USEOBSERVATIONS are
+  	!select a subset of observations
+  msex EQ msex EQ 1
+  and
+  dementia_ever NE 1
+  ;
+  DEFINE:
+  	! assign variables to the process (A)
+  a1=gripavg_1;
+  a2=gripavg_2;
+  a3=gripavg_3;
+  a4=gripavg_4;
+  a5=gripavg_5;
+  ! assign variables to the process (B)
+  b1=cts_nccrtd_1;
+  b2=cts_nccrtd_2;
+  b3=cts_nccrtd_3;
+  b4=cts_nccrtd_4;
+  b5=cts_nccrtd_5;
+  	!assign variables to time points
+  time1=time_since_bl_1;
+  time2=time_since_bl_2;
+  time3=time_since_bl_3;
+  time4=time_since_bl_4;
+  time5=time_since_bl_5;
+  	
+  ANALYSIS:
+  TYPE = RANDOM;
+  COVERAGE=.00;
+  MODEL:
+  	!first-level equation
+  	! process (A)
+  ia sa | a1 - a5 AT time1 - time5;
+  	! process (B)
+  ib sb | b1 - b5 AT time1 - time5;
+  	!variance of the first-level terms
+  ia (v_ia);
+  sa (v_sa);
+  ib (v_ib);
+  sb (v_sb);
+  	!covariance among first-level terms
+  ia WITH sa (c_iasb);
+  ia WITH ib (c_iaib);
+  ia WITH sb (c_iasb);
+  sa WITH ib (c_saib);
+  sa WITH sb (c_sasb);
+  ib WITH sb (c_iasb);
+  	!second-level equation
+  ia sa ib sb ON age_c70
+  htm_c160
+  edu_c7;
+  	!residual means of process (A)
+  a1
+  a2
+  a3
+  a4
+  a5 (res_a);
+  	!residual means of process (B)
+  b1
+  b2
+  b3
+  b4
+  b5 (res_b);
+  	!Paired covariances constrained to be equal across t
+  a1
+  a2
+  a3
+  a4
+  a5 pwith b1
+  b2
+  b3
+  b4
+  b5(res_cov);
+  MODEL CONSTRAINT:
+  	!assigns labels to new parameters;
+  NEW r_iaib;
+  NEW r_sasb;
+  NEW r_res_ab;
+  	!compute confidence intervals for correlation coefficients;
+  r_iaib = c_iaib/((v_ia**0.5)*(v_ib**0.5));
+  r_sasb = c_sasb/((v_sa**0.5)*(v_sb**0.5));
+  r_res_ab = res_cov/((res_a**0.5)*(res_b**0.5));
+  OUTPUT: sampstat cinterval;
+  PLOT: Type is Plot1 Plot2 Plot3;
+
+
+
+*** WARNING
+  Data set contains cases with missing on all variables.
+  These cases were not included in the analysis.
+  Number of cases with missing on all variables:  300
+*** WARNING
+  Data set contains cases with missing on x-variables.
+  These cases were not included in the analysis.
+  Number of cases with missing on x-variables:  102
+*** WARNING
+  Data set contains cases with missing on all variables except
+  x-variables.  These cases were not included in the analysis.
+  Number of cases with missing on all variables except x-variables:  834
+   3 WARNING(S) FOUND IN THE INPUT INSTRUCTIONS
+
+
+
+
+Script produced from the prototype in ./sandbox/syntax-creator/
+
+SUMMARY OF ANALYSIS
+
+Number of groups                                                 1
+Number of observations                                        1120
+
+Number of dependent variables                                   10
+Number of independent variables                                  3
+Number of continuous latent variables                            4
+
+Observed dependent variables
+
+  Continuous
+   A1          A2          A3          A4          A5          B1
+   B2          B3          B4          B5
+
+Observed independent variables
+   AGE_C70     HTM_C160    EDU_C7
+
+Continuous latent variables
+   IA          SA          IB          SB
+
+Variables with special functions
+
+  Time scores
+   TIME1       TIME2       TIME3       TIME4       TIME5
+
+
+Estimator                                                      MLR
+Information matrix                                        OBSERVED
+Maximum number of iterations                                   100
+Convergence criterion                                    0.100D-05
+Maximum number of EM iterations                                500
+Convergence criteria for the EM algorithm
+  Loglikelihood change                                   0.100D-02
+  Relative loglikelihood change                          0.100D-05
+  Derivative                                             0.100D-03
+Minimum variance                                         0.100D-03
+Maximum number of steepest descent iterations                   20
+Maximum number of iterations for H1                           2000
+Convergence criterion for H1                             0.100D-03
+Optimization algorithm                                         EMA
+
+Input data file(s)
+  wide-dataset.dat
+Input data format  FREE
+
+
+SUMMARY OF DATA
+
+     Number of missing data patterns            34
+
+
+COVARIANCE COVERAGE OF DATA
+
+Minimum covariance coverage value   0.000
+
+
+     PROPORTION OF DATA PRESENT
+
+
+           Covariance Coverage
+              A1            A2            A3            A4            A5
+              ________      ________      ________      ________      ________
+ A1             0.231
+ A2             0.004         0.176
+ A3             0.001         0.003         0.140
+ A4             0.003         0.001         0.005         0.097
+ A5             0.000         0.000         0.000         0.001         0.060
+ B1             0.227         0.005         0.001         0.003         0.000
+ B2             0.005         0.175         0.004         0.001         0.001
+ B3             0.004         0.004         0.138         0.005         0.000
+ B4             0.004         0.001         0.006         0.096         0.001
+ B5             0.000         0.001         0.000         0.001         0.060
+ AGE_C70        0.231         0.176         0.140         0.097         0.060
+ HTM_C160       0.231         0.176         0.140         0.097         0.060
+ EDU_C7         0.231         0.176         0.140         0.097         0.060
+
+
+           Covariance Coverage
+              B1            B2            B3            B4            B5
+              ________      ________      ________      ________      ________
+ B1             0.300
+ B2             0.008         0.241
+ B3             0.004         0.004         0.195
+ B4             0.004         0.002         0.007         0.163
+ B5             0.000         0.003         0.000         0.002         0.125
+ AGE_C70        0.300         0.241         0.195         0.163         0.125
+ HTM_C160       0.300         0.241         0.195         0.163         0.125
+ EDU_C7         0.300         0.241         0.195         0.163         0.125
+
+
+           Covariance Coverage
+              AGE_C70       HTM_C160      EDU_C7
+              ________      ________      ________
+ AGE_C70        1.000
+ HTM_C160       1.000         1.000
+ EDU_C7         1.000         1.000         1.000
+
+
+SAMPLE STATISTICS
+
+     NO CONVERGENCE IN THE MISSING DATA ESTIMATION OF THE SAMPLE STATISTICS.
+
+
+UNIVARIATE HIGHER-ORDER MOMENT DESCRIPTIVE STATISTICS
+
+
+     UNIVARIATE HIGHER-ORDER MOMENT DESCRIPTIVE STATISTICS
+
+         Variable/         Mean/     Skewness/   Minimum/ % with                Percentiles
+        Sample Size      Variance    Kurtosis    Maximum  Min/Max      20%/60%    40%/80%    Median
+
+     A1                   49.863       0.778      12.000    0.39%      32.750     42.250     46.250
+             259.000     380.950       0.741     130.250    0.39%      50.750     66.750
+     A2                   49.791       0.914      12.750    0.51%      33.000     41.750     45.750
+             197.000     400.316       1.042     127.500    0.51%      51.500     66.500
+     A3                   48.407       0.919      14.000    0.64%      32.500     41.250     46.000
+             157.000     331.715       1.390     125.000    0.64%      49.000     62.750
+     A4                   45.947       0.533      10.500    0.92%      29.750     39.500     44.000
+             109.000     304.764       0.161      98.250    0.92%      48.000     59.000
+     A5                   47.944       0.640      15.750    1.49%      32.500     41.250     45.500
+              67.000     311.516       0.718     107.750    1.49%      50.500     61.000
+     B1                   25.753      -0.148       5.000    0.30%      20.000     24.000     26.000
+             336.000      57.073      -0.133      46.000    0.30%      28.000     32.000
+     B2                   25.900      -0.362       3.000    0.37%      20.000     24.000     26.000
+             270.000      51.934       0.088      42.000    0.37%      28.000     32.000
+     B3                   25.399      -0.156       4.000    0.46%      19.000     24.000     25.000
+             218.000      57.781      -0.363      42.000    1.38%      28.000     32.000
+     B4                   25.623      -0.128       6.000    1.09%      18.000     23.000     25.000
+             183.000      65.142      -0.408      46.000    0.55%      28.000     32.000
+     B5                   25.614      -0.266       5.000    0.71%      19.000     24.000     26.000
+             140.000      41.551      -0.228      40.000    0.71%      28.000     31.000
+     AGE_C70               7.851      -0.572     -16.338    0.09%       1.830      7.339      9.176
+            1120.000      57.286       0.039      28.708    0.09%      10.849     13.830
+     HTM_C160              0.039       0.116      -0.355    0.54%      -0.051      0.000      0.026
+            1120.000       0.010       0.825       0.407    0.09%       0.051      0.127
+     EDU_C7                8.021       0.059      -7.000    0.09%       5.000      7.000      9.000
+            1120.000      10.714       2.335      21.000    0.80%       9.000     11.000
+
+     THE MODEL ESTIMATION DID NOT TERMINATE NORMALLY DUE TO AN ILL-CONDITIONED
+     FISHER INFORMATION MATRIX.  CHANGE YOUR MODEL AND/OR STARTING VALUES.
+
+     THE MODEL ESTIMATION DID NOT TERMINATE NORMALLY DUE TO A NON-POSITIVE
+     DEFINITE FISHER INFORMATION MATRIX.  THIS MAY BE DUE TO THE STARTING VALUES
+     BUT MAY ALSO BE AN INDICATION OF MODEL NONIDENTIFICATION.  THE CONDITION
+     NUMBER IS       0.913D-18.
+
+     THE STANDARD ERRORS OF THE MODEL PARAMETER ESTIMATES COULD NOT BE
+     COMPUTED.  THIS IS OFTEN DUE TO THE STARTING VALUES BUT MAY ALSO BE
+     AN INDICATION OF MODEL NONIDENTIFICATION.  CHANGE YOUR MODEL AND/OR
+     STARTING VALUES.  PROBLEM INVOLVING THE FOLLOWING PARAMETER:
+     Parameter 6, B1 WITH A5
+
+
+     THE MISSING DATA EM ALGORITHM USED TO COMPUTE SAMPLE STATISTICS HAS NOT
+     CONVERGED WITH RESPECT TO THE PARAMETER ESTIMATES.  THIS MAY BE DUE TO
+     SPARSE DATA LEADING TO A SINGULAR COVARIANCE MATRIX ESTIMATE.  INCREASE
+     THE NUMBER OF EM ITERATIONS.
+
+     THE H1 MODEL ESTIMATION DID NOT CONVERGE.  CHI-SQUARE TEST AND SAMPLE STATISTICS COULD NOT
+     BE COMPUTED.  INCREASE THE NUMBER OF H1ITERATIONS.
+
+
+
+
+
+
+MODEL RESULTS
+
+                    Estimate
+
+ IA         ON
+    AGE_C70           -0.087
+    HTM_C160         111.647
+    EDU_C7             0.566
+
+ SA         ON
+    AGE_C70           -0.482
+    HTM_C160           4.618
+    EDU_C7            -0.352
+
+ IB         ON
+    AGE_C70            0.025
+    HTM_C160          29.327
+    EDU_C7             0.099
+
+ SB         ON
+    AGE_C70           -0.275
+    HTM_C160         -27.244
+    EDU_C7             0.280
+
+ IA       WITH
+    SA               -34.134
+    IB                20.471
+    SB               -34.134
+
+ SA       WITH
+    IB                24.883
+    SB                -7.350
+
+ IB       WITH
+    SB               -34.134
+
+ A5       WITH
+    B1                 0.000
+    B2                -1.366
+    B3                 0.001
+    B4                -0.547
+    B5                 2.501
+
+ Intercepts
+    A1                 0.000
+    A2                 0.000
+    A3                 0.000
+    A4                 0.000
+    A5                 0.000
+    B1                 0.000
+    B2                 0.000
+    B3                 0.000
+    B4                 0.000
+    B5                 0.000
+    IA                42.056
+    SA                 5.389
+    IB                27.461
+    SB                -2.878
+
+ Residual Variances
+    A1                10.420
+    A2                 9.991
+    A3                21.916
+    A4                15.209
+    A5                24.813
+    B1                14.168
+    B2                10.798
+    B3                18.137
+    B4                16.422
+    B5                 2.600
+    IA               230.741
+    SA                28.179
+    IB                79.501
+    SB                23.199
+
+New/Additional Parameters
+    R_IAIB             0.151
+    R_SASB            -0.287
+    R_RES_AB           0.311
+
+
+MODEL COMMAND WITH FINAL ESTIMATES USED AS STARTING VALUES
+
+     ia sa | a1-a5 AT time1-time5;
+     ib sb | b1-b5 AT time1-time5;
+
+     ia ON age_c70*-0.08739;
+     ia ON htm_c160*111.64678;
+     ia ON edu_c7*0.56553;
+     sa ON age_c70*-0.48239;
+     sa ON htm_c160*4.61818;
+     sa ON edu_c7*-0.35190;
+     ib ON age_c70*0.02531;
+     ib ON htm_c160*29.32665;
+     ib ON edu_c7*0.09867;
+     sb ON age_c70*-0.27482;
+     sb ON htm_c160*-27.24365;
+     sb ON edu_c7*0.27977;
+
+     a5 WITH b1*0.00011;
+     a5 WITH b2*-1.36647;
+     a5 WITH b3*0.00074;
+     a5 WITH b4*-0.54736;
+     a5 WITH b5*2.50099 (res_cov);
+     ia WITH sa*-34.13371 (c_iasb);
+     ia WITH ib*20.47137 (c_iaib);
+     ia WITH sb*-34.13371 (c_iasb);
+     sa WITH ib*24.88253 (c_saib);
+     sa WITH sb*-7.35029 (c_sasb);
+     ib WITH sb*-34.13371 (c_iasb);
+
+     [ a1@0 ];
+     [ a2@0 ];
+     [ a3@0 ];
+     [ a4@0 ];
+     [ a5@0 ];
+     [ b1@0 ];
+     [ b2@0 ];
+     [ b3@0 ];
+     [ b4@0 ];
+     [ b5@0 ];
+     [ ia*42.05565 ];
+     [ sa*5.38929 ];
+     [ ib*27.46103 ];
+     [ sb*-2.87799 ];
+
+     a1*10.42036;
+     a2*9.99107;
+     a3*21.91637;
+     a4*15.20891;
+     a5*24.81282 (res_a);
+     b1*14.16759;
+     b2*10.79764;
+     b3*18.13711;
+     b4*16.42234;
+     b5*2.59984 (res_b);
+     ia*230.74078 (v_ia);
+     sa*28.17892 (v_sa);
+     ib*79.50121 (v_ib);
+     sb*23.19884 (v_sb);
+
+     ! NEW statements in MODEL CONSTRAINT
+     NEW(r_iaib*0.15115);
+     NEW(r_sasb*-0.28748);
+     NEW(r_res_ab*0.31139);
+
+
+
+
+TECHNICAL 1 OUTPUT
+
+
+     PARAMETER SPECIFICATION
+
+
+           NU
+              A1            A2            A3            A4            A5
+              ________      ________      ________      ________      ________
+ 1                  0             0             0             0             0
+
+
+           NU
+              B1            B2            B3            B4            B5
+              ________      ________      ________      ________      ________
+ 1                  0             0             0             0             0
+
+
+           NU
+              AGE_C70       HTM_C160      EDU_C7
+              ________      ________      ________
+ 1                  0             0             0
+
+
+           LAMBDA
+              IA            SA            IB            SB            AGE_C70
+              ________      ________      ________      ________      ________
+ A1                 0             0             0             0             0
+ A2                 0             0             0             0             0
+ A3                 0             0             0             0             0
+ A4                 0             0             0             0             0
+ A5                 0             0             0             0             0
+ B1                 0             0             0             0             0
+ B2                 0             0             0             0             0
+ B3                 0             0             0             0             0
+ B4                 0             0             0             0             0
+ B5                 0             0             0             0             0
+ AGE_C70            0             0             0             0             0
+ HTM_C160           0             0             0             0             0
+ EDU_C7             0             0             0             0             0
+
+
+           LAMBDA
+              HTM_C160      EDU_C7
+              ________      ________
+ A1                 0             0
+ A2                 0             0
+ A3                 0             0
+ A4                 0             0
+ A5                 0             0
+ B1                 0             0
+ B2                 0             0
+ B3                 0             0
+ B4                 0             0
+ B5                 0             0
+ AGE_C70            0             0
+ HTM_C160           0             0
+ EDU_C7             0             0
+
+
+           THETA
+              A1            A2            A3            A4            A5
+              ________      ________      ________      ________      ________
+ A1                 1
+ A2                 0             2
+ A3                 0             0             3
+ A4                 0             0             0             4
+ A5                 0             0             0             0             5
+ B1                 0             0             0             0             6
+ B2                 0             0             0             0             8
+ B3                 0             0             0             0            10
+ B4                 0             0             0             0            12
+ B5                 0             0             0             0            14
+ AGE_C70            0             0             0             0             0
+ HTM_C160           0             0             0             0             0
+ EDU_C7             0             0             0             0             0
+
+
+           THETA
+              B1            B2            B3            B4            B5
+              ________      ________      ________      ________      ________
+ B1                 7
+ B2                 0             9
+ B3                 0             0            11
+ B4                 0             0             0            13
+ B5                 0             0             0             0            15
+ AGE_C70            0             0             0             0             0
+ HTM_C160           0             0             0             0             0
+ EDU_C7             0             0             0             0             0
+
+
+           THETA
+              AGE_C70       HTM_C160      EDU_C7
+              ________      ________      ________
+ AGE_C70            0
+ HTM_C160           0             0
+ EDU_C7             0             0             0
+
+
+           ALPHA
+              IA            SA            IB            SB            AGE_C70
+              ________      ________      ________      ________      ________
+ 1                 16            17            18            19             0
+
+
+           ALPHA
+              HTM_C160      EDU_C7
+              ________      ________
+ 1                  0             0
+
+
+           BETA
+              IA            SA            IB            SB            AGE_C70
+              ________      ________      ________      ________      ________
+ IA                 0             0             0             0            20
+ SA                 0             0             0             0            23
+ IB                 0             0             0             0            26
+ SB                 0             0             0             0            29
+ AGE_C70            0             0             0             0             0
+ HTM_C160           0             0             0             0             0
+ EDU_C7             0             0             0             0             0
+
+
+           BETA
+              HTM_C160      EDU_C7
+              ________      ________
+ IA                21            22
+ SA                24            25
+ IB                27            28
+ SB                30            31
+ AGE_C70            0             0
+ HTM_C160           0             0
+ EDU_C7             0             0
+
+
+           PSI
+              IA            SA            IB            SB            AGE_C70
+              ________      ________      ________      ________      ________
+ IA                32
+ SA                33            34
+ IB                35            36            37
+ SB                33            38            33            39
+ AGE_C70            0             0             0             0             0
+ HTM_C160           0             0             0             0             0
+ EDU_C7             0             0             0             0             0
+
+
+           PSI
+              HTM_C160      EDU_C7
+              ________      ________
+ HTM_C160           0
+ EDU_C7             0             0
+
+
+     PARAMETER SPECIFICATION FOR THE ADDITIONAL PARAMETERS
+
+
+           NEW/ADDITIONAL PARAMETERS
+              R_IAIB        R_SASB        R_RES_AB
+              ________      ________      ________
+ 1                 40            41            42
+
+
+     STARTING VALUES
+
+
+           NU
+              A1            A2            A3            A4            A5
+              ________      ________      ________      ________      ________
+ 1              0.000         0.000         0.000         0.000         0.000
+
+
+           NU
+              B1            B2            B3            B4            B5
+              ________      ________      ________      ________      ________
+ 1              0.000         0.000         0.000         0.000         0.000
+
+
+           NU
+              AGE_C70       HTM_C160      EDU_C7
+              ________      ________      ________
+ 1              0.000         0.000         0.000
+
+
+           LAMBDA
+              IA            SA            IB            SB            AGE_C70
+              ________      ________      ________      ________      ________
+ A1             0.000         0.000         0.000         0.000         0.000
+ A2             0.000         0.000         0.000         0.000         0.000
+ A3             0.000         0.000         0.000         0.000         0.000
+ A4             0.000         0.000         0.000         0.000         0.000
+ A5             0.000         0.000         0.000         0.000         0.000
+ B1             0.000         0.000         0.000         0.000         0.000
+ B2             0.000         0.000         0.000         0.000         0.000
+ B3             0.000         0.000         0.000         0.000         0.000
+ B4             0.000         0.000         0.000         0.000         0.000
+ B5             0.000         0.000         0.000         0.000         0.000
+ AGE_C70        0.000         0.000         0.000         0.000         1.000
+ HTM_C160       0.000         0.000         0.000         0.000         0.000
+ EDU_C7         0.000         0.000         0.000         0.000         0.000
+
+
+           LAMBDA
+              HTM_C160      EDU_C7
+              ________      ________
+ A1             0.000         0.000
+ A2             0.000         0.000
+ A3             0.000         0.000
+ A4             0.000         0.000
+ A5             0.000         0.000
+ B1             0.000         0.000
+ B2             0.000         0.000
+ B3             0.000         0.000
+ B4             0.000         0.000
+ B5             0.000         0.000
+ AGE_C70        0.000         0.000
+ HTM_C160       1.000         0.000
+ EDU_C7         0.000         1.000
+
+
+           THETA
+              A1            A2            A3            A4            A5
+              ________      ________      ________      ________      ________
+ A1           190.475
+ A2             0.000       200.158
+ A3             0.000         0.000       165.858
+ A4             0.000         0.000         0.000       152.382
+ A5             0.000         0.000         0.000         0.000       155.758
+ B1             0.000         0.000         0.000         0.000         0.000
+ B2             0.000         0.000         0.000         0.000         0.000
+ B3             0.000         0.000         0.000         0.000         0.000
+ B4             0.000         0.000         0.000         0.000         0.000
+ B5             0.000         0.000         0.000         0.000         0.000
+ AGE_C70        0.000         0.000         0.000         0.000         0.000
+ HTM_C160       0.000         0.000         0.000         0.000         0.000
+ EDU_C7         0.000         0.000         0.000         0.000         0.000
+
+
+           THETA
+              B1            B2            B3            B4            B5
+              ________      ________      ________      ________      ________
+ B1            28.536
+ B2             0.000        25.967
+ B3             0.000         0.000        28.891
+ B4             0.000         0.000         0.000        32.571
+ B5             0.000         0.000         0.000         0.000        20.776
+ AGE_C70        0.000         0.000         0.000         0.000         0.000
+ HTM_C160       0.000         0.000         0.000         0.000         0.000
+ EDU_C7         0.000         0.000         0.000         0.000         0.000
+
+
+           THETA
+              AGE_C70       HTM_C160      EDU_C7
+              ________      ________      ________
+ AGE_C70        0.000
+ HTM_C160       0.000         0.000
+ EDU_C7         0.000         0.000         0.000
+
+
+           ALPHA
+              IA            SA            IB            SB            AGE_C70
+              ________      ________      ________      ________      ________
+ 1             33.945         1.590        27.978        -1.556         0.000
+
+
+           ALPHA
+              HTM_C160      EDU_C7
+              ________      ________
+ 1              0.000         0.000
+
+
+           BETA
+              IA            SA            IB            SB            AGE_C70
+              ________      ________      ________      ________      ________
+ IA             0.000         0.000         0.000         0.000         0.000
+ SA             0.000         0.000         0.000         0.000         0.000
+ IB             0.000         0.000         0.000         0.000         0.000
+ SB             0.000         0.000         0.000         0.000         0.000
+ AGE_C70        0.000         0.000         0.000         0.000         0.000
+ HTM_C160       0.000         0.000         0.000         0.000         0.000
+ EDU_C7         0.000         0.000         0.000         0.000         0.000
+
+
+           BETA
+              HTM_C160      EDU_C7
+              ________      ________
+ IA             0.000         0.000
+ SA             0.000         0.000
+ IB             0.000         0.000
+ SB             0.000         0.000
+ AGE_C70        0.000         0.000
+ HTM_C160       0.000         0.000
+ EDU_C7         0.000         0.000
+
+
+           PSI
+              IA            SA            IB            SB            AGE_C70
+              ________      ________      ________      ________      ________
+ IA           302.331
+ SA             0.000       316.168
+ IB             0.000         0.000       351.708
+ SB             0.000         0.000         0.000       341.592
+ AGE_C70        0.000         0.000         0.000         0.000        28.643
+ HTM_C160       0.000         0.000         0.000         0.000         0.000
+ EDU_C7         0.000         0.000         0.000         0.000         0.000
+
+
+           PSI
+              HTM_C160      EDU_C7
+              ________      ________
+ HTM_C160       0.005
+ EDU_C7         0.000         5.357
+
+
+     STARTING VALUES FOR THE ADDITIONAL PARAMETERS
+
+
+           NEW/ADDITIONAL PARAMETERS
+              R_IAIB        R_SASB        R_RES_AB
+              ________      ________      ________
+ 1              0.500         0.500         0.500
+
+
+DIAGRAM INFORMATION
+
+  Use View Diagram under the Diagram menu in the Mplus Editor to view the diagram.
+  If running Mplus from the Mplus Diagrammer, the diagram opens automatically.
+
+  Diagram output
+    c:\users\koval_000\documents\github\ialsa-2015-portland-stencil\sandbox\syntax-creator\outputs\g
+
+     Beginning Time:  16:25:12
+        Ending Time:  16:27:43
+       Elapsed Time:  00:02:31
+
+
+
+MUTHEN & MUTHEN
+3463 Stoner Ave.
+Los Angeles, CA  90066
+
+Tel: (310) 391-9971
+Fax: (310) 391-8971
+Web: www.StatModel.com
+Support: Support@StatModel.com
+
+Copyright (c) 1998-2014 Muthen & Muthen
