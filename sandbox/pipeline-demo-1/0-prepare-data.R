@@ -35,7 +35,7 @@ ds <- ds %>% dplyr::filter(study == "MAP ")# keep only MAP
 ds %>% dplyr::count(study)
 
 
-# ----- select_subset ------------------------------------
+# ----- subset-variables ------------------------------------
 # select variables you will need for modeling, be conservative
 selected_items <- c(
   "id", # personal identifier
@@ -62,7 +62,7 @@ selected_items <- c(
   "gripavg" # Extremity strength
 )
 
-# ---- compute_time_difference -------------------------
+# ---- compute-time-difference -------------------------
 d <- as.data.frame(ds[ , selected_items])
 # d <- d[1:10 , c("id","age_bl", "fu_year", "age_at_visit")]
 # d
@@ -75,7 +75,7 @@ d <- d %>%
   ) %>%
   dplyr::ungroup()
 
-# ---- compute_subsetting_conditions ---------------------
+# ---- compute-subsetting-conditions ---------------------
 
 d <- d %>%
   dplyr::group_by(id) %>%
@@ -88,7 +88,7 @@ table(d$dementia_ever, useNA="always")
 d$dementia_ever <- as.numeric(d$dementia_ever)
 d <- dplyr::tbl_df(d)
 
-# ---- center_covariates ---------------------------------
+# ---- center-covariates ---------------------------------
 d <- d %>%
   dplyr::mutate(age_c70 = age_bl - 70)  %>%
   # dplyr::mutate(htm_c160 = htm - 1.6)  %>%
@@ -101,7 +101,7 @@ d <- d %>%
 d %>% dplyr::glimpse()
 
 
-# ---- missing_values -----------------------------
+# ---- remove-missing-observations -----------------------------
 # remove observations with missing values on the time variable
 table(d$fu_year, useNA = "always")
 d <- d %>% dplyr::filter(!is.na(fu_year))
@@ -127,8 +127,8 @@ dw <- data.table::dcast(data.table::setDT(d), id + age_bl + age_c70 + htm + htm_
 
 ))
 
-# recode missing values
-
+# ---- recode-missing-values --------------
+# this step makes sense only in the context of preparing data for use in Mplus
 
 # set.seed(42)
 # random_subset <- sample(unique(dw$id), size = 500)
@@ -145,7 +145,7 @@ table(dw$age_centered_70, useNA = "always")
 # ---- export_data -------------------------------------
 # At this point we would like to export the data in .dat format
 # to be fed to Mplus for any subsequent modeling
-saved_location <- "./sandbox/syntax-creator/outputs/grip-mmse/"
+saved_location <- "./sandbox/pipeline-demo-1/outputs/grip-mmse/"
 
 write.table(d,paste0(saved_location,"/long-dataset.dat"), row.names=F, col.names=F)
 write(names(d), paste0(saved_location,"/long-variable-names.txt"), sep=" ")
