@@ -24,6 +24,8 @@ path_input  <- "../MAP/data-unshared/derived/dto.rds"
 # figure_path <- 'manipulation/stitched-output/te/'
 
 # put test assert here to check the connection.
+generic_path <- "./sandbox/pipeline-demo-1/outputs/generic-data/"
+
 
 
 # ---- load-data ---------------------------------------------------------------
@@ -127,6 +129,10 @@ dw <- data.table::dcast(data.table::setDT(d), id + age_bl + age_c70 + htm + htm_
 
 ))
 
+# ---- save-r-data -------------------
+saveRDS(d,paste0(generic_path,"data-long.rds"))
+saveRDS(dw,paste0(generic_path,"data-wide.rds"))
+
 # ---- recode-missing-values --------------
 # this step makes sense only in the context of preparing data for use in Mplus
 
@@ -141,6 +147,14 @@ table(dw$age_centered_70, useNA = "always")
 
 
 # dw %>% dplyr::glimpse()
+# ---- save-generic-data ---------------------
+
+write.table(d,paste0(generic_path,"/long-dataset.dat"), row.names=F, col.names=F)
+write(names(d), paste0(generic_path,"/long-variable-names.txt"), sep=" ")
+
+write.table(dw, paste0(generic_path,"/wide-dataset.dat"), row.names=F, col.names=F)
+write(names(dw), paste0(generic_path,"/wide-variable-names.txt"), sep=" ")
+
 
 # ---- export_data -------------------------------------
 # At this point we would like to export the data in .dat format
