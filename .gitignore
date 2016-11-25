@@ -55,3 +55,5 @@ ialsa-2015-portland-stencil.Rproj
 manipulation/translator-support/outputs/grip-numbercomp/long-dataset.dat
 *.dat
 *.gh5
+sandbox/pipeline-demo-1/outputs/generic-data/data-long.rds
+sandbox/pipeline-demo-1/outputs/generic-data/data-wide.rds
