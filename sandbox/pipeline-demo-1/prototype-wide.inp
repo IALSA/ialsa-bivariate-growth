@@ -88,9 +88,9 @@ r_sasb = c_sasb/((v_sa**0.5)*(v_sb**0.5));
 r_res_ab = res_cov/((res_a**0.5)*(res_b**0.5));
 
 SAVEDATA:
-FILE is   %saved_analysis%.dat;
+FILE is   %saved_analysis%_fscores.dat;
 SAVE = FSCORES;
-
+RESULTS are   %saved_analysis%_results.dat;
 	
 OUTPUT: sampstat cinterval;
 PLOT: Type is Plot1 Plot2 Plot3;

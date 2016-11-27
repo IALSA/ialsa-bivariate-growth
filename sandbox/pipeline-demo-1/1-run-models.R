@@ -31,13 +31,12 @@ requireNamespace("IalsaSynthesis")
 # ---- declare-globals ---------------------------------------------------------
 options(width=160)
 path_output        <- "./sandbox/pipeline-demo-1/outputs/"
-path_generic_data  <- "./sandbox/pipeline-demo-1/outputs/generic-data/"
-path_generic_data  <- "./sandbox/pipeline-demo-1/outputs/generic-data/wide-dataset.dat"
-path_generic_names <- "./sandbox/pipeline-demo-1/outputs/generic-data/wide-variable-names.txt"
+path_generic_data  <- "./data/unshared/derived/map-1/wide-dataset.dat"
+path_generic_names <- "./data/unshared/derived/map-1/wide-variable-names.txt"
 
 # ---- load-data ---------------------------------------------------------------
-ds_long <- readRDS("./sandbox/pipeline-demo-1/outputs/generic-data/data-long.rds")
-ds_wide <- readRDS("./sandbox/pipeline-demo-1/outputs/generic-data/data-wide.rds")
+ds_long <- readRDS("./data/unshared/derived/map-1/data-long.rds")
+ds_wide <- readRDS("./data/unshared/derived/map-1/data-wide.rds")
 
 
 testit::assert("File does not exist",file.exists(path_generic_data)) 
@@ -72,9 +71,11 @@ ls_subgroup = list(
   "unisex" = "unisex"
 )
 ls_model_type <- list( 
-  "a"   = c("age_c70"),
-  "ah"  = c("age_c70","edu_c7"),
-  "aeh" = c("age_c70","edu_c7","htm_c")
+   "a"   = c("age_c70")
+  ,"ah"  = c("age_c70","edu_c7")
+  ,"aeh" = c("age_c70","edu_c7","htm_c")
+  ,"aehplus" = c("age_c70","edu_c7","htm_c", "smoke","stroke","diabetes")
+  ,"aeplus" = c("age_c70","edu_c7", "smoke","stroke","diabetes")
 ) 
 
 
@@ -84,8 +85,8 @@ ls_model_type <- list(
 
 wave_set_modeled <-  c(1,2,3,4,5)
 subset_condition_1 <- "dementia_ever NE 1"
+folder_data        = "./data/unshared/derived/map-1"
 path_prototype     = "./sandbox/pipeline-demo-1/prototype-wide.inp"
-folder_data        = "./sandbox/pipeline-demo-1/generic-data"
 folder_output      = "./sandbox/pipeline-demo-1/outputs/" 
 # folder_data        = "./data/unshared/derived/map"
 # folder_output      = "./output/studies/map/phys-cog/pulmonary" 
@@ -94,12 +95,12 @@ folder_output      = "./sandbox/pipeline-demo-1/outputs/"
 mplus_generator_bivariate(
    model_number       = "b1"
   ,subgroup           = "unisex"
-  ,model_type         = "aeh"
+  ,model_type         = "aehplus"
   ,process_a_name     = 'fev'# item name of process (A), goes into file name
   ,process_a_mplus    = 'fev'# identifies the variable in Mplus
-  ,process_b_name     = 'numbercomp'# item name of process (B), goes into file name
-  ,process_b_mplus    = 'cts_nccrtd'# identifies the variable in Mplus
-  ,covariate_set      = ls_model_type[["aeh"]]
+  ,process_b_name     = 'numbercomparison'# item name of process (B), goes into file name
+  ,process_b_mplus    = 'numbercomparison'# identifies the variable in Mplus
+  ,covariate_set      = ls_model_type[["aehplus"]]
   ,wave_set_modeled   = wave_set_modeled 
   ,subset_condition_1 = subset_condition_1 # subset data to member of this group
   ,path_prototype     = path_prototype

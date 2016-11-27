@@ -270,7 +270,11 @@ ds <- ds %>%
     age_c70 = age_at_bl - 70,
     edu_c7  = educ - 7,
     htm_c   = ifelse(     male==0, htm_med - 1.6,
-                   ifelse(male==1, htm_med - 1.72,NA))
+                   ifelse(male==1, htm_med - 1.72,NA)),
+    #rename to keep names 8 characters of less
+    smoke    = smoke_ever,
+    stroke   = stroke_ever,
+    diabetes = diab_ever
   ) 
   
 # ds %>% dplyr::glimpse()
@@ -279,7 +283,7 @@ ds <- ds %>%
 # ---- prepare-for-mplus ---------------------
 varnames_transformed <- c(
   "id","wave","years_since_bl", "male",
-  "age_c70","edu_c7", "htm_c", "diab_ever","stroke_ever", "smoke_ever","dementia_ever"
+  "age_c70","edu_c7", "htm_c", "smoke","stroke", "diabetes","dementia_ever"
 )
 ds_long <- ds %>% 
   dplyr::select_(.dots = c(varnames_transformed, varnames_physical, varnames_cognitive)) 
@@ -288,7 +292,7 @@ ds_long <- ds %>%
 # define variable properties for long-to-wide conversion
 variables_static <- c(
   "id", "male",
-  "age_c70","edu_c7", "htm_c", "diab_ever","stroke_ever", "smoke_ever", "dementia_ever"
+  "age_c70","edu_c7", "htm_c", "smoke","stroke", "diabetes", "dementia_ever"
   )
 variables_longitudinal <- setdiff(colnames(ds_long),variables_static)  # not static
 (variables_longitudinal <- variables_longitudinal[!variables_longitudinal=="wave"]) # all except wave
@@ -300,12 +304,12 @@ ds_wide <- ds_long %>%
   tidyr::gather_(key="variable", value="value", variables_longitudinal) %>%
   dplyr::mutate(wave = as.character(wave)) %>%
   dplyr::mutate(wave = ifelse( wave %in% paste0(0:9), paste0("0",wave),wave)) %>%
-  dplyr::mutate(wave = paste0("t", wave)) %>%
+  # dplyr::mutate(wave = paste0("t", wave)) %>%
   tidyr::unite(temp, variable, wave) %>%
   tidyr::spread(temp, value)
 ds_wide %>% dplyr::glimpse()
 # prepare data to be read by MPlus
-ds_mplus <- lapply(ds_wide,as.numeric)
+ds_mplus <- sapply(ds_wide,as.numeric) %>% as.data.frame()
 ds_mplus[is.na(ds_mplus)] <- -9999 # replace NA with a numerical code
 ds_mplus %>% dplyr::glimpse()
 
