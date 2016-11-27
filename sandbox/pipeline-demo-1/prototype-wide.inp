@@ -2,16 +2,16 @@ TITLE:
 Script produced from the prototype in ./sandbox/syntax-creator/
 
 DATA:
-File = wide-dataset.dat;
+File = wide-dataset.dat ;
 
 VARIABLE:
-Names are
+NAMES are
  %names_are%
 	;
 
 Missing are all (-9999);
 
-USEVAR are
+USEVARIABLES are
 	!define the variables used in the analysis
 	! covariates used in the model
 %covariate_set%	
@@ -29,7 +29,7 @@ TSCORES are
 
 USEOBSERVATIONS are
 	!select a subset of observations
-msex EQ %subgroup_sex% 
+%subgroup_condition%
 and
 %subset_condition_1%
 ;
@@ -61,12 +61,12 @@ sa (v_sa);
 ib (v_ib);
 sb (v_sb);
 	!covariance among first-level terms
-ia WITH sa (c_iasb);
+ia WITH sa (c_iasa);
 ia WITH ib (c_iaib);
 ia WITH sb (c_iasb);
 sa WITH ib (c_saib);
 sa WITH sb (c_sasb);
-ib WITH sb (c_iasb);
+ib WITH sb (c_ibsb);
 	!second-level equation
 ia sa ib sb ON %covariate_set%;
 	!residual covariance of process (A)
@@ -87,6 +87,11 @@ r_iaib = c_iaib/((v_ia**0.5)*(v_ib**0.5));
 r_sasb = c_sasb/((v_sa**0.5)*(v_sb**0.5));
 r_res_ab = res_cov/((res_a**0.5)*(res_b**0.5));
 
+SAVEDATA:
+FILE is   %saved_analysis%.dat;
+SAVE = FSCORES;
+
+	
 OUTPUT: sampstat cinterval;
 PLOT: Type is Plot1 Plot2 Plot3;
 
