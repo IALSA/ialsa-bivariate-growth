@@ -1,1 +1,0 @@
-This folder contains the generic data files to be used in all estimation runs
