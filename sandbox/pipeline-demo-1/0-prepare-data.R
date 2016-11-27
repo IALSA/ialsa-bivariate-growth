@@ -317,6 +317,7 @@ ds_mplus %>% dplyr::glimpse()
 saveRDS(ds,paste0(generic_path,"data-long-plus.rds"))
 # only variables used in analysis
 saveRDS(ds_long,paste0(generic_path,"data-long.rds"))
+saveRDS(ds_wide,paste0(generic_path,"data-wide.rds"))
 # prepared for Mplus
 write.table(ds_mplus, paste0(generic_path,"/wide-dataset.dat"), row.names=F, col.names=F)
 write(names(ds_mplus), paste0(generic_path,"/wide-variable-names.txt"), sep=" ")
