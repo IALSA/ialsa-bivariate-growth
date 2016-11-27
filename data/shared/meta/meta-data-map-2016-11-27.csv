@@ -1,0 +1,135 @@
+name,label,type,name_new,construct,self_reported,longitudinal,unit,include,url,notes,frailty
+ad_reagan,Dicotomized NIA-Reagan score,pathology,ad_reagan,alzheimer,FALSE,FALSE,category,,https://www.radc.rush.edu/docs/var/detail.htm?category=Pathology&subcategory=Alzheimer%27s%20Disease&variable=niareagansc,,
+age_at_visit,Age at cycle - fractional,demographic,age_at_visit,age,FALSE,TRUE,year,TRUE,https://www.radc.rush.edu/docs/var/detail.htm?category=Demographics&variable=age_at_visit,,
+age_bl,Age at baseline,demographic,age_bl,age,FALSE,FALSE,year,TRUE,https://www.radc.rush.edu/docs/var/detail.htm?category=Demographics&variable=age_bl,,
+age_death,Age at death,demographic,age_death,age,FALSE,FALSE,year,TRUE,https://www.radc.rush.edu/docs/var/detail.htm?category=Demographics&variable=age_death,,
+agreeableness,NEO agreeableness-ROS,personality,agreeableness,,TRUE,FALSE,scale,,,,
+alcohol_g_bl,Grams of alcohol used per day at baseline,substance,alcohol_g_bl,alcohol,TRUE,FALSE,grams,TRUE,https://www.radc.rush.edu/docs/var/detail.htm?category=Lifestyle&subcategory=Alcohol%20and%20Tobacco%20Use&variable=alcohol_g_bl,,
+anxiety_10items,Anxiety-10 item version - ROS and MAP,personality,anxiety_10items,anxiety,,FALSE,scale,,Todo,,
+apoe_genotype,Apolipoprotein E genotype,clinical,apoe_genotype,apoe,FALSE,FALSE,category,TRUE,https://www.radc.rush.edu/docs/var/detail.htm?category=Genotypes&subcategory=ApoE&variable=apoe_genotype,,
+bmi,Body mass index,physical,bmi,physique,FALSE,TRUE,kg/msq,TRUE,https://www.radc.rush.edu/docs/var/detail.htm?category=Lifestyle&subcategory=Physical%20Activity&variable=bmi,,TRUE
+bp11,Blood pressure measurement- sitting - trial 1,medical,bp_sit_1,hypertension,FALSE,TRUE,scale,,https://www.radc.rush.edu/docs/var/detail.htm?category=Medical%20Conditions&subcategory=Blood%20Pressure&variable=sbp_avg,,
+bp2,Blood pressure measurement- sitting - trial 2,medical,bp_sit_2,hypertension,FALSE,TRUE,scale,,https://www.radc.rush.edu/docs/var/detail.htm?category=Medical%20Conditions&subcategory=Blood%20Pressure&variable=sbp_avg,,
+bp3,Hx of Meds for HTN,medical,bp_meds,hypertension,TRUE,TRUE,category,,todo,,
+bp31,Blood pressure measurement- standing,medical,bp_stand_3,hypertension,FALSE,TRUE,scale,,https://www.radc.rush.edu/docs/var/detail.htm?category=Medical%20Conditions&subcategory=Blood%20Pressure&variable=sbp_avg,,
+braaksc,Semiquantitative measure of neurofibrillary tangles,pathology,braaksc,Braak,FALSE,FALSE,category,,https://www.radc.rush.edu/docs/var/detail.htm?category=Pathology&subcategory=Alzheimer%27s%20Disease&variable=braaksc,,
+bun,Blood urea nitrogen,clinical,bun,,FALSE,TRUE,scale,,todo,,
+ca,Calcium,clinical,ca,,FALSE,TRUE,scale,,todo,,
+cancer_cum,Medical Conditions - cancer - cumulative,,cancer_cum,cancer,FALSE,FALSE,category,,todo,,
+ceradsc,Semiquantitative measure of neuritic plaques,pathology,ceradsc,CERAD,FALSE,FALSE,category,,https://www.radc.rush.edu/docs/var/detail.htm?category=Pathology&subcategory=Alzheimer%27s%20Disease&variable=ceradsc,,
+cesdsum,Measure of depressive symptoms (Modified CESD),psychological,cesdsum,depression,TRUE,TRUE,scale,TRUE,https://www.radc.rush.edu/docs/var/detail.htm?category=Affect%20and%20Personality&subcategory=Depression&variable=cesdsum,,TRUE
+chd_cogact_freq,Cognitive actifity - child,cognitive,cogact_chd,NA,NA,NA,NA,TRUE,todo,young adult?,
+chf_cum,Medical Conditions - congestive heart failure -cumulative,clinical,chf_cum,cardio,TRUE,TRUE,category,TRUE,todo,,
+chlstrl,Cholesterol,clinical,cholesterol,cholesterol,FALSE,TRUE,scale,,todo,,
+cl,Chloride,clinical,cloride,cloride,FALSE,TRUE,scale,,todo,,
+claudication_cum,Medical conditions - claudication -cumulative,clinical,claudication_cum,,FALSE,FALSE,category,,todo,,
+co2,Carbon Dioxide,clinical,co2,,FALSE,TRUE,scale,,Todo,,
+cogdate,Date of the interview at baseline,design,date_at_baseline,,FALSE,FALSE,,TRUE,,,
+cogdx,Final consensus cognitive diagnosis,clinical,cogdx,NA,FALSE,FALSE,category,TRUE,https://www.radc.rush.edu/docs/var/detail.htm?category=Clinical%20Diagnosis&subcategory=Final%20consensus%20diagnosis&variable=cogdx,,
+cogn_ep,Calculated domain score-episodic memory,cognitive,cogn_ep,episodic memory,FALSE,TRUE,composite,TRUE,https://www.radc.rush.edu/docs/var/detail.htm?category=Cognition&subcategory=Domains&variable=cogn_ep,,
+cogn_global,Global cognitive score,cognitive,cogn_global,global cognition,FALSE,TRUE,composite,TRUE,https://www.radc.rush.edu/docs/var/detail.htm?category=Cognition&subcategory=Global%20cognition&variable=cogn_global,,TRUE
+cogn_po,Calculated domain score - perceptual orientation,cognitive,cogn_po,perceptual orientation,FALSE,TRUE,composite,TRUE,https://www.radc.rush.edu/docs/var/detail.htm?category=Cognition&subcategory=Domains&variable=cogn_po,,
+cogn_ps,Calculated domain score - perceptual speed,cognitive,cogn_ps,perceptual speed,FALSE,TRUE,composite,TRUE,https://www.radc.rush.edu/docs/var/detail.htm?category=Cognition&subcategory=Domains&variable=cogn_ps,,
+cogn_se,Calculated domain score - semantic memory,cognitive,cogn_se,semantic memory,FALSE,TRUE,composite,TRUE,https://www.radc.rush.edu/docs/var/detail.htm?category=Cognition&subcategory=Domains&variable=cogn_se,,
+cogn_wo,Calculated domain score - working memory,cognitive,cogn_wo,working memory,FALSE,TRUE,composite,TRUE,https://www.radc.rush.edu/docs/var/detail.htm?category=Cognition&subcategory=Domains&variable=cogn_wo,,
+conscientiousness,Conscientiousness-ROS/MAP,personality,conscientiousness,conscientiousness,TRUE,FALSE,composite,,https://www.radc.rush.edu/docs/var/detail.htm?category=Affect%20and%20Personality&subcategory=NEO&variable=conscientiousness,,
+crn,Creatinine,clinical,crn,,,,,,,,
+cts_animals,Category fluence - Animals,cognitive,cts_animals,,,,,,,,
+cts_bname,Boston naming - 2014,cognitive,cts_bname,semantic memory,FALSE,TRUE,0 to 15,,,,
+cts_catflu,Category fluency - 2014,cognitive,catfluency,semantic memory,FALSE,TRUE,0 to 75,,,,
+cts_db,Digits backwards - 2014,cognitive,cts_db,working memory,FALSE,TRUE,0 to 12,,,,
+cts_delay,Logical memory IIa - 2014,cognitive,cts_delay,episodic memory,FALSE,TRUE,0 to 25,,,,
+cts_df,Digits forwards - 2014,cognitive,cts_df,working memory,FALSE,TRUE,0 to 12,,,,
+cts_doperf,Digit ordering - 2014,cognitive,cts_doperf,working memory,FALSE,TRUE,0 to 14,,,,
+cts_ebdr,East Boston story - delayed recall - 2014,cognitive,cts_ebdr,episodic memory,FALSE,TRUE,0 to 12,,,,
+cts_ebmt,East Boston story - immediate - 2014,cognitive,cts_ebmt,episodic memory,FALSE,TRUE,0 to 12,,,,
+cts_fruits,Category fluency - Fruits,cognitive,cts_fruits,NA,NA,NA,NA,,,,
+cts_idea,Complex ideas - 2014,cognitive,cts_idea,verbal comprehension,FALSE,TRUE,0 to 8,,,,
+cts_lopair,Line orientation - 2014,cognitive,cts_lopair,perceptual orientation,FALSE,TRUE,0 to 15,,,,
+cts_mmse30,MMSE - 2014,cognitive,mmse,dementia,TRUE,TRUE,0 to 30,TRUE,,,
+cts_nccrtd,Number comparison - 2014,cognitive,cts_nccrtd,perceptual speed,FALSE,TRUE,0 to 48,,,,
+cts_pmat,Progressive Matrices - 2014,cognitive,cts_pmat,perceptual orientation,FALSE,TRUE,0 to 16,,,,
+cts_pmsub,NA,cognitive,cts_pmsub,NA,NA,NA,NA,,,,
+cts_read_nart,Reading test-NART-2014,cognitive,cts_read_nart,semantic memory,FALSE,TRUE,0 to 10,,,,
+cts_read_wrat,Reading test - WRAT - 2014,cognitive,cts_read_wrat,semantic memory,FALSE,TRUE,0 to 15,,,,
+cts_sdmt,Symbol digit modalitities - 2014,cognitive,cts_sdmt,perceptual speed,FALSE,TRUE,0 to 110,,,,
+cts_story,Logical memory Ia - immediate - 2014,cognitive,cts_story,episodic memory,FALSE,TRUE,0 to 25,,,,
+cts_stroop_cname,NA,cognitive,cts_stroop_cname,NA,NA,NA,NA,,,,
+cts_stroop_wread,NA,cognitive,cts_stroop_wread,NA,NA,NA,NA,,,,
+cts_wli,Word list I- immediate- 2014,cognitive,cts_wli,episodic memory,FALSE,TRUE,0 to 30,,,,
+cts_wlii,Word list II - delayed - 2014,cognitive,cts_wlii,episodic memory,FALSE,TRUE,0 to 10,,,,
+cts_wliii,Word list III - recognition - 2014,cognitive,cts_wliii,episodic memory,FALSE,TRUE,o to 10,,,,
+dcfdx,Clinical dx summary,clinical,dcfdx,cognition,FALSE,TRUE,category,TRUE,,,
+dementia,Dementia diagnosis,cognitive,dementia,dementia,FALSE,TRUE,"0, 1",TRUE,,,TRUE
+dm_cum,Medical history - diabetes - cumulative,clinical,dm_cum,diabetes,TRUE,TRUE,NA,,,,
+educ,Years of education,demographic,educ,education,TRUE,FALSE,years,TRUE,,,
+fasting,Whether blood was collected on fasting participant,clinical,fasting,NA,NA,NA,NA,,,,
+fev,forced expiratory volume,physical,fev,physcap,FALSE,TRUE,liters,TRUE,,,TRUE
+fu_year,Follow-up year,design,fu_year,time,FALSE,TRUE,time point,TRUE,,,
+gait_speed,Gait Speed - MAP,physical,gait_speed,physcap,FALSE,TRUE,min/sec,TRUE,,,TRUE
+glucose,Glucose,clinical,glucose,NA,NA,NA,NA,,,,
+gripavg,Extremity strength,physical,gripavg,physcap,FALSE,TRUE,lbs,TRUE,,,TRUE
+hba1c,Hemoglobin A1c,clinical,hba1c,NA,NA,NA,NA,,,,
+hdlchlstrl,HDL cholesterol,clinical,hdlchlstrl,NA,NA,NA,NA,,,,
+hdlratio,HDL ratio,clinical,hdlratio,NA,NA,NA,NA,,,,
+headinjrloc_cum,NA,NA,headinjrloc_cum,NA,NA,NA,NA,,,,
+heart_cum,Medical Conditions - heart - cumulative,clinical,heart_cum,NA,NA,NA,NA,,,,TRUE
+htm,Height(meters),physical,htm,physique,FALSE,TRUE,meters,TRUE,,,
+hypertension_cum,Medical conditions - hypertension - cumulative,clinical,hypertension_cum,hypertension,TRUE,TRUE,NA,,,,
+iadlsum,Instrumental activities of daily liviing,physical,iadlsum,physact,TRUE,TRUE,scale,TRUE,,,TRUE
+intrusion,Negative social exchange-intrusion-MAP,psychological,intrusion,NA,NA,NA,NA,,,,
+k,Potassium,clinical,k,NA,NA,NA,NA,,,,
+katzsum,Katz measure of disability,physical,katzsum,physcap,TRUE,TRUE,scale,TRUE,,,TRUE
+late_life_cogact_freq,Codnitive activity - late life,lifestyle,cogact_old,,TRUE,TRUE,category,TRUE,https://www.radc.rush.edu/docs/var/detail.htm?category=Lifestyle&subcategory=Cognitive%20Activity&variable=late_life_cogact_freq,,
+late_life_soc_act,Social activity - late life,lifestyle,socact_old,,TRUE,TRUE,category,TRUE,https://www.radc.rush.edu/docs/var/detail.htm?category=Lifestyle&subcategory=Social%20Engagement&variable=late_life_soc_act,,TRUE
+ldai_bl,Lifetime daily alcohol intake -baseline,substance,alco_life,alcohol,TRUE,FALSE,drinks/day,TRUE,,,
+ldlchlstrl,LDL cholesterol,clinical,ldlchlstrl,NA,NA,NA,NA,,,,
+lostcons_ever,NA,NA,lostcons_ever,NA,NA,NA,NA,,,,
+ma_adult_cogact_freq,Codnitive activity - middle age,cognitive,cogact_midage,NA,NA,NA,NA,TRUE,https://www.radc.rush.edu/docs/var/detail.htm?category=Lifestyle&subcategory=Cognitive%20Activity&variable=ma_adult_cogact_freq,,
+mep,maximal expiratory pressure,physical,mep,physcap,FALSE,TRUE,cm H20,TRUE,,,
+mip,maximal inspiratory pressure,physical,mip,physcap,FALSE,TRUE,cm H20,TRUE,,,
+msex,Gender,demographic,msex,sex,FALSE,FALSE,category,TRUE,,,
+na,Sodium,clinical,na,NA,NA,NA,NA,,,,
+neglifeevents,Negative life events,psychological,neglifeevents,NA,NA,NA,NA,,,,TRUE
+negsocexchange,Negative social exchange,psychological,negsocexchange,NA,NA,NA,NA,TRUE,https://www.radc.rush.edu/docs/var/detail.htm?category=Affect%20and%20Personality&subcategory=Negative&variable=negsocexchange,,TRUE
+neo_altruism,NEO altruism scale-MAP,personality,neo_altruism,NA,NA,NA,NA,,,,
+neo_conscientiousness,NEO conscientiousness-MAP,personality,neo_conscientiousness,NA,NA,NA,NA,,,,
+neo_trust,NEO trust-MAP,personality,neo_trust,NA,NA,NA,NA,,,,
+neuroticism_12,Neuroticism - 12 item version-RMM,personality,neuroticism_12,NA,NA,NA,NA,,https://www.radc.rush.edu/docs/var/detail.htm?category=Affect%20and%20Personality&subcategory=NEO&variable=neuroticism_12,,
+neuroticism_6,Neuroticism - 6 item version - RMM,personality,neuroticism_6,NA,NA,NA,NA,,,,
+niareagansc,NA,NA,niareagansc,NA,NA,NA,NA,,,,
+nohelp,Negative social exchange-help-MAP,psychological,nohelp,NA,NA,NA,NA,,,,
+openness,NEO openess-ROS,personality,openness,NA,NA,NA,NA,,,,
+panas,Panas score,psychological,panas,NA,NA,NA,NA,,,,TRUE
+past_cogact_freq,Cognitive actifity - past,cognitive,cogact_past,NA,NA,NA,NA,TRUE,todo,,
+perceivedstress,Perceived stress,psychological,perceivedstress,NA,NA,NA,NA,,,,
+phys5itemsum,Physical activity (summary of 5 items),physical,phys5itemsum,physact,TRUE,TRUE,hours,TRUE,https://www.radc.rush.edu/docs/var/detail.htm?category=Lifestyle&subcategory=Physical%20Activity&variable=phys5itemsum,,TRUE
+projid,Subject identifier,design,id,NA,NA,NA,NA,TRUE,,,
+pvc,pulmonary vital capacity,physical,pvc,physcap,FALSE,TRUE,liters,TRUE,,,
+q3smo_bl,Smoking quantity-baseline,substance,q3smo_bl,smoking,TRUE,FALSE,cigarettes / day,TRUE,,,
+q40inc,Income level at age 40,demographic,income_40,NA,NA,NA,NA,TRUE,,,TRUE
+q4smo_bl,Smoking duration-baseline,substance,q4smo_bl,smoking,TRUE,FALSE,years,TRUE,,,
+r_depres,Major depression dx-clinic rating,psychological,r_depres,NA,NA,NA,NA,,,,TRUE
+r_stroke,Clinical stroke dx,clinical,r_stroke,stroke,FALSE,TRUE,category,TRUE,https://www.radc.rush.edu/docs/var/detail.htm?category=Clinical%20Diagnosis&subcategory=Stroke&variable=r_stroke,,TRUE
+race,Participant's race,demographic,race,race,TRUE,FALSE,category,TRUE,,,
+rejection,Negative social exchange - rejection-MAP,psychological,rejection,NA,NA,NA,NA,TRUE,,,TRUE
+rosbscl,Rosow-Breslau scale,physical,rosbscl,physcap,TRUE,TRUE,scale,TRUE,,,TRUE
+rosbsum,Rosow-Breslau scale,physical,rosbsum,physcap,TRUE,TRUE,scale,TRUE,,,TRUE
+scaled_to.x,Scaled parameter,design,scaled_to,NA,NA,NA,NA,,,,
+scaled_to.y,Scaled parameter,design,scaled_to.y,NA,NA,NA,NA,NA,,,
+smoking,Smoking,substance,smoking,smoking,TRUE,FALSE,category,TRUE,https://www.radc.rush.edu/docs/var/detail.htm;jsessionid=187364DADEF559C56D3E23DD4E03700B?category=Lifestyle&subcategory=Alcohol%20and%20Tobacco%20Use&variable=smoking,,
+soc_net,Social network size,lifestyle,soc_net,NA,NA,NA,NA,TRUE,https://www.radc.rush.edu/docs/var/detail.htm?category=Lifestyle&subcategory=Social%20Engagement&variable=soc_net,,TRUE
+social_isolation,Percieved social isolation,lifestyle,social_isolation,NA,NA,NA,NA,TRUE,https://www.radc.rush.edu/docs/var/detail.htm?category=Lifestyle&subcategory=Social%20Engagement&variable=social_isolation,,
+spanish,Spanish/Hispanic origin,demographic,spanish,race,TRUE,FALSE,category,,,,
+stroke_cum,Clinical Diagnoses - Stroke - cumulative,clinical,stroke_cum,stroke,FALSE,TRUE,category,,,,TRUE
+study,The particular RADC study (MAP/ROS/RMM),design,study,NA,NA,NA,NA,,,,
+thyroid_cum,Medical Conditions - thyroid disease - cumulative,clinical,thyroid_cum,NA,NA,NA,NA,,,,
+total_smell_test,NA,NA,total_smell_test,NA,NA,NA,NA,,,,
+unsympathetic,Negative social exchange-unsymapathetic-MAP,psychological,unsympathetic,NA,NA,NA,NA,,,,TRUE
+vasc_3dis_sum,"Vascular disease burden (3 items w/o chf) ROS/MAP/MARS",clinical,vasc_3dis_sum,NA,NA,NA,NA,,,,
+vasc_4dis_sum,"Vascular disease burden (4 items) - MAP/MARS only",clinical,vasc_4dis_sum,NA,NA,NA,NA,,,,
+vasc_risks_sum,Vascular disease risk factors,clinical,vasc_risks_sum,NA,NA,NA,NA,,,,
+vision,Vision acuity,physical,vision,physcap,FALSE,TRUE,scale,,,,TRUE
+visionlog,Visual acuity,physical,visionlog,physcap,FALSE,TRUE,scale,,,,TRUE
+wtkg,Weight (kg),physical,wtkg,physique,FALSE,TRUE,kilos,TRUE,,,TRUE
+ya_adult_cogact_freq,Cognitive actifity - young adult,NA,cogact_young,NA,NA,NA,NA,TRUE,https://www.radc.rush.edu/docs/var/detail.htm?category=Lifestyle&subcategory=Cognitive%20Activity&variable=ya_adult_cogact_freq,,
