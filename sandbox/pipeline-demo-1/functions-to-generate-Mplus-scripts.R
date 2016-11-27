@@ -1,7 +1,7 @@
 # ## This script declares the functions that generate Mplus .inp file used in model fitting.
 
 # prototype = "sandbox/01-univariate-linear/prototype-map-wide.inp"
-# saved_location = "sandbox/01-univariate-linear/example"
+# path_folder = "sandbox/01-univariate-linear/example"
 # process_a_name = 'numbercomp'# measure name
 # process_a_mplus = 'cts_nccrtd'# Mplus variable
 # subgroup_sex = "male"
@@ -11,50 +11,76 @@
 
 
 mplus_generator_bivariate <- function(
-    prototype #= "./sandbox/syntax-creator/prototype-map-wide.inp" # point to the template
-  , saved_location #= "sandbox/syntax-creator/example" # where to store all the .inp/.out scripts
-  , process_a_name #= 'grip'# item name of process (A)
-  , process_a_mplus #= 'gripavg'# Mplus variable of process (A)
-  , process_b_name #= 'numbercomp'# item name of process (B)
-  , process_b_mplus# = 'cts_nccrtd'# Mplus variable of process (B)
-  , subgroup_sex#= "male" # subset data to members of this group
-  , subset_condition_1 #= "dementia_ever NE 1" # subset data to member of this group
-  , covariate_set #= c("age_c70","htm_c160", "edu_c7")  # list of covariates ("_c" stands for "centercd)
-  , wave_set_modeled #=  c(1,2,3,4,5) # Integer vector of waves considered by the model, ie c(1,2,3,5,8).
-  , run_models = FALSE # If TRUE then Mplus runs estimation to produce .out, .gh5, and/or, other files
-){
+   model_number      
+  ,subgroup          
+  ,model_type        
+  ,process_a_name    
+  ,process_a_mplus   
+  ,process_b_name    
+  ,process_b_mplus   
+  ,covariate_set     
+  ,wave_set_modeled  
+  ,subset_condition_1
+  ,path_prototype    
+  ,folder_data       
+  ,folder_output     
+  ,run_models         = FALSE # I
+){ 
+  #Values for testing and development
+  # model_number       = "b1"
+  # subgroup           = "male"
+  # model_type         = "aeh"
+  # process_a_name     = 'fev'# item name of process (A), goes into file name
+  # process_a_mplus    = 'fev'# identifies the variable in Mplus
+  # process_b_name     = 'numbercomp'# item name of process (B), goes into file name
+  # process_b_mplus    = 'cts_nccrtd'# identifies the variable in Mplus
+  # covariate_set      = c("age_c70","edu_c7","htm_c")
+  # wave_set_modeled   = c(1,2,3,4,5)
+  # subset_condition_1 = "dementia_ever NE 1" # subset data to member of this group
+  # path_prototype     = "./sandbox/pipeline-demo-1/prototype-wide.inp"
+  # folder_data        = "./sandbox/pipeline-demo-1/generic-data"
+  # folder_output      = "./sandbox/pipeline-demo-1/outputs"
+  # run_models         = FALSE # I
+
+  model_id  <- paste0(model_number,"_",subgroup,"_",model_type,"_",process_a_name,"_",process_b_name)
+  
+  sub_directory <- paste0(folder_output,"/",process_a_name,"-",process_b_name)
+  dir.create(sub_directory, showWarnings = TRUE)
+  path_generic_data <- file.path(folder_data,"wide-dataset.dat")
+  path_local_data <- file.path(sub_directory,"wide-dataset.dat")
+  path_generic_names <- file.path(folder_data,"wide-variable-names.txt")
+  
+  file.copy(
+    from=path_generic_data, 
+    to  =path_local_data,
+    overwrite = TRUE
+  )
+  
+  # after modification .inp files will be saved as:
+  input_file_name <- paste0(sub_directory,"/", model_id, ".inp")  
+  
   # input the template to work with
-  proto_input <- scan(prototype, what='character', sep='\n')
-    #This makes it all one (big) element, if you need it in the future.
+  proto_input <- scan(path_prototype, what='character', sep='\n') 
+  #This makes it all one (big) element, if you need it in the future.
   # proto_input <- paste(proto_input, collapse="\n")
 
-    # declare global values
-  pathVarnames <- paste0(saved_location,"/wide-variable-names.txt")
-  names_are <- read.csv(pathVarnames, header = F, stringsAsFactors = F)[ ,1]
-  (a <- grepl("age_at_visit_", names_are))
-  (b <- names_are[a])
-  (c <- gsub("age_at_visit_","",b))
-  (d <- as.numeric(c))
-  wave_set_possible <- d
-  (wave_modeled_max <- max(wave_set_modeled))
-
-
-  # after modification .inp files will be saved as:
-  newFile <- paste0(saved_location,"/", subgroup_sex ,"_", wave_modeled_max,".inp")
-  # newFile <- paste0(saved_location,"/","b1_",subgroup_sex ,"_", wave_modeled_max,".inp")
-
-
+  names_are <- read.csv(path_generic_names, header = F, stringsAsFactors = F)[ ,1] 
+  
   # TITLE:
   # DATA:
   # File = wide_dataset.dat; # automatic object, created by `look-at-data.R`
+  
+  
   # VARIABLE:
-  # Names are # define the variabels used in the analysis
-
-  names_are <- paste(names_are, collapse="\n") #Collapse all the variable names to one element (seperated by line breaks).
-  names_are <- stringr::str_wrap(str = names_are, width  = 80, exdent = 4)
+  # NAMES are 
+  # define what variables exist in the dataset
+  names_are <- paste(names_are, collapse="\n")  #Collapse all the variable names to one element (seperated by line breaks).
+  names_are <- stringr::str_wrap(str = names_are, width  = 80, exdent = 4) 
   proto_input <- gsub(pattern = "%names_are%", replacement = names_are, x = proto_input)
 
-  # USEVAR are # what variables are used in estimation
+  
+  # USEVARIABLES are
+  # define what variables are used in estimation
   (estimated_timepoints <- paste0("time",wave_set_modeled))
   (estimated_timepoints <- paste(estimated_timepoints, collapse="\n"))
   proto_input <- gsub(pattern ="%estimated_timepoints%", replacement = estimated_timepoints, x = proto_input)
@@ -67,23 +93,27 @@ mplus_generator_bivariate <- function(
   (process_b_timepoints <- paste(process_b_timepoints, collapse="\n"))
   proto_input <- gsub(pattern ="%process_b_timepoints%", replacement = process_b_timepoints, x = proto_input)
 
-
   (covariate_set <- paste(covariate_set, collapse="\n"))
   proto_input <- gsub(pattern = "%covariate_set%", replacement = covariate_set, x = proto_input)
 
 
-  # Useobservations are # select a subset of observation
-  if(subgroup_sex=="male"){
-    print_sex_value <- paste0("msex EQ 1")
-  } else {
-    print_sex_value <- paste0("msex EQ 0")
+  # USEOBSERVATIONS are 
+  # select a subset of observation
+  # TODO: allow for dynamic specification of the grouping variable (msex) and values (0,1)
+  if(subgroup == "male"){
+    print_subgroup_condition <- paste0("msex EQ 1")
+  }
+  if(subgroup == "female"){
+    print_subgroup_condition <- paste0("msex EQ 0")
+  }
+  if(subgroup == "unisex"){
+    print_subgroup_condition <- paste0("msex EQ 0 | or msex EQ 1 ")
   }
   # subset
-  proto_input <- gsub("msex EQ %subgroup_sex%", paste0("msex EQ ",print_sex_value), proto_input)
+  proto_input <- gsub("%subgroup_condition%", print_subgroup_condition, proto_input)
   proto_input <- gsub("%subset_condition_1%", subset_condition_1, proto_input)
 
   # DEFINE:
-
   (match_timepoints_process_a <- paste0("a",wave_set_modeled,"=",process_a_mplus,"_",wave_set_modeled,";"))
   match_timepoints_process_a <- paste(match_timepoints_process_a, collapse="\n")
   proto_input <- gsub(pattern ="%match_timepoints_process_a%", replacement = match_timepoints_process_a, x = proto_input)
@@ -125,23 +155,28 @@ mplus_generator_bivariate <- function(
   proto_input <- gsub(pattern ="%resid_covariances%", replacement = resid_covariances, x = proto_input)
 
 
+  # browser()
 
-
-
-  browser()
-
-
-  proto_input <- gsub(pattern ="%waves_max%", replacement = wave_modeled_max, x = proto_input)
   # MODEL CONSTRAINT:
+  
+  # SAVEDATA:
+  # FILE is 
+  proto_input <- gsub("%saved_analysis%", model_id, proto_input)
+  
   # OUTPUT:
   # PLOT:
 
-  writeLines(proto_input,newFile)
+  writeLines(proto_input,input_file_name)
 
   if(run_models){
     # run all models in the folder
     pathRoot <- getwd()
-    saved_laction_mplus <- paste0(pathRoot,"/",saved_location)
-    MplusAutomation::runModels(directory=saved_laction_mplus )#, Mplus_command = Mplus_install_path)
+    saved_location_mplus <- paste0(pathRoot,"/",sub_directory)
+    saved_location_mplus <- gsub("/./","/",saved_location_mplus)
+    MplusAutomation::runModels( 
+      directory=saved_location_mplus,
+      filefilter = paste0(model_id,".inp") 
+      )#, Mplus_command = Mplus_install_path)
   }
+  file.remove(path_local_data)
 } # close function

@@ -1,76 +1,112 @@
-options(width=160)
-rm(list=ls())
-cat("\f")
+# knitr::stitch_rmd(script="./___/___.R", output="./___/stitched-output/___.md")
+#These first few lines run only when the file is run in RStudio, !!NOT when an Rmd/Rnw file calls it!!
+rm(list=ls(all=TRUE))  #Clear the variables from previous runs.
+cat("\f") # clear console 
 
-library(dplyr)
-library(tidyr)
-library(ggplot2)
+# ---- load-sources ------------------------------------------------------------
+# Call `base::source()` on any repo file that defines functions needed below.  Ideally, no real operations are performed.
 
+#e.g ab_TAU_00 <- c("ab_TAU_00_est", "ab_TAU_00_se", "ab_TAU_00_wald", "ab_TAU_00_pval")
+source("./sandbox/pipeline-demo-1/group-variables.R") # selected_results
+# load functions that generate scripts
+source("./sandbox/pipeline-demo-1/functions-to-generate-Mplus-scripts.R")
+# load functions that process the output files and create a summary dataset
+source("./sandbox/pipeline-demo-1/extraction-functions.R")
 
-pathRoot <- getwd()
-pathFolder <- file.path(pathRoot,"sandbox/syntax-creator/outputs")
-
-requireNamespace("ggplot2")
-requireNamespace("dplyr") #Avoid attaching dplyr, b/c its function names conflict with a lot of packages (esp base, stats, and plyr).
-requireNamespace("testit")
+# ---- load-packages -----------------------------------------------------------
+# Attach these packages so their functions don't need to be qualified: http://r-pkgs.had.co.nz/namespace.html#search-path
+library(magrittr) # enables piping : %>% 
+# Verify these packages are available on the machine, but their functions need to be qualified: http://r-pkgs.had.co.nz/namespace.html#search-path
+requireNamespace("ggplot2") # graphing
+requireNamespace("tidyr") # data manipulation
+requireNamespace("dplyr") # Avoid attaching dplyr, b/c its function names conflict with a lot of packages (esp base, stats, and plyr).
+requireNamespace("testit")# For asserting conditions meet expected patterns.
+# requireNamespace("car") # For it's `recode()` function.
 requireNamespace("reshape2") # data transformations
 requireNamespace("data.table") # data transformations
 requireNamespace("MplusAutomation")
 requireNamespace("stringr")
 requireNamespace("IalsaSynthesis")
 
+# ---- declare-globals ---------------------------------------------------------
+options(width=160)
+path_output        <- "./sandbox/pipeline-demo-1/outputs/"
+path_generic_data  <- "./sandbox/pipeline-demo-1/outputs/generic-data/"
+path_generic_data  <- "./sandbox/pipeline-demo-1/outputs/generic-data/wide-dataset.dat"
+path_generic_names <- "./sandbox/pipeline-demo-1/outputs/generic-data/wide-variable-names.txt"
 
-#e.g ab_TAU_00 <- c("ab_TAU_00_est", "ab_TAU_00_se", "ab_TAU_00_wald", "ab_TAU_00_pval")
-source("./sandbox/syntax-creator/group-variables.R") # selected_results
-# load functions that generate scripts
-source("./sandbox/syntax-creator/functions-to-generate-Mplus-scripts.R")
-# load functions that process the output files and create a summary dataset
-source("./sandbox/syntax-creator/extraction-functions.R")
-
-
-
-# create a object with main_theme definition
-source("./scripts/graphs/theme-main.R")
-# load graphical function
-source("./scripts/graphs/kb-profiles-functions.R")
+# ---- load-data ---------------------------------------------------------------
+ds_long <- readRDS("./sandbox/pipeline-demo-1/outputs/generic-data/data-long.rds")
+ds_wide <- readRDS("./sandbox/pipeline-demo-1/outputs/generic-data/data-wide.rds")
 
 
-# point to  the folder with datasets containing model results
+testit::assert("File does not exist",file.exists(path_generic_data)) 
+testit::assert("File does not exist",file.exists(path_generic_names)) 
 
-run_models_on <- FALSE # TRUE - run models, FALSE - only create script
+# file.copy(from=path_generic_names,to= "./sandbox/pipeline-demo-1/outputs/",overwrite = T)
 
+# ---- inspect-data -------------------------------------------------------------
 
+# ---- tweak-data --------------------------------------------------------------
+
+# ---- basic-table --------------------------------------------------------------
+
+# ---- basic-graph --------------------------------------------------------------
 
 
 
 ## Run the lines above to load the needed functions
 ## Execute script snippets for each pair individually below this
+# ---- create-predictor-selector -----------------------------
+ls_model_number <- list(
+  "univariate_flat"      = "u0",
+  "univariate_linear"    = "u1",
+  "univariate_quadratic" = "u2",
+  "bivariate_flat"       = "b0",
+  "bivariate_linear"     = "b1",
+  "bivariate_quadratic"  = "b2"
+)
+ls_subgroup = list(
+  "male" = "male",
+  "female" = "female",
+  "unisex" = "unisex"
+)
+ls_model_type <- list( 
+  "a"   = c("age_c70"),
+  "ah"  = c("age_c70","edu_c7"),
+  "aeh" = c("age_c70","edu_c7","htm_c")
+) 
 
 
 ############################################################ GRIP #####
 ## @knitr dummy_1
 # Use the first example as the template for further pairs
-saved_location <- "./sandbox/syntax-creator/outputs/grip-mmse"
-prototype <-  "./sandbox/syntax-creator/prototype-map-wide.inp"
-wave_set_modeled <-  c(1,2,3,4,5)
-# source('./sandbox/syntax-creator/look-at-data.R') # create data for this outcome pair
-# function below is defined in "./sandbox/syntax-creator/functions-to-generate-Mplus-scripts.R"
-mplus_generator_bivariate(
-  prototype = prototype # point to the template
-  # saved_location == place_in
-  , saved_location = saved_location # where to store all the .inp/.out scripts
-  , process_a_name = 'grip'# item name of process (A)
-  # remove mplus name , no need if data are prepped by R,
-  , process_a_mplus = 'gripavg'# Mplus variable of process (A)
-  , process_b_name = 'mmse'# item name of process (B)
-  , process_b_mplus = 'mmse'# Mplus variable of process (B)
-  , subgroup_sex = "male" # subset data to members of this group
-  , subset_condition_1 = "dementia_ever NE 1" # subset data to member of this group
-  , covariate_set = c("age_c70","htm_c160", "edu_c7")  # list of covariates ("_c" stands for "centercd)
-  , wave_set_modeled =  wave_set_modeled # Integer vector of waves considered by the model, ie c(1,2,3,5,8).
-  , run_models = FALSE # If TRUE then Mplus runs estimation to produce .out, .gh5, and/or, other files
-) # execute to generate script
 
+wave_set_modeled <-  c(1,2,3,4,5)
+subset_condition_1 <- "dementia_ever NE 1"
+path_prototype     = "./sandbox/pipeline-demo-1/prototype-wide.inp"
+folder_data        = "./sandbox/pipeline-demo-1/generic-data"
+folder_output      = "./sandbox/pipeline-demo-1/outputs/" 
+# folder_data        = "./data/unshared/derived/map"
+# folder_output      = "./output/studies/map/phys-cog/pulmonary" 
+
+
+mplus_generator_bivariate(
+   model_number       = "b1"
+  ,subgroup           = "unisex"
+  ,model_type         = "aeh"
+  ,process_a_name     = 'fev'# item name of process (A), goes into file name
+  ,process_a_mplus    = 'fev'# identifies the variable in Mplus
+  ,process_b_name     = 'numbercomp'# item name of process (B), goes into file name
+  ,process_b_mplus    = 'cts_nccrtd'# identifies the variable in Mplus
+  ,covariate_set      = ls_model_type[["aeh"]]
+  ,wave_set_modeled   = wave_set_modeled 
+  ,subset_condition_1 = subset_condition_1 # subset data to member of this group
+  ,path_prototype     = path_prototype
+  ,folder_data        = folder_data
+  ,folder_output      = folder_output
+  ,run_models         = TRUE # If TRUE then Mplus runs estimation to produce .out, .gh5, and/or, other files
+)
 
 # ---- examine-created-output ----------------
 source("./scripts/mplus/mplus.R") # downloaded from http://www.statmodel.com/mplus-R/mplus.R

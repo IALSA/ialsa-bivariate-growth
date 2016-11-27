@@ -9,7 +9,7 @@ base::source("./scripts/functions-common.R")
 # ---- load-packages -----------------------------------------------------------
 # Attach these packages so their functions don't need to be qualified: http://r-pkgs.had.co.nz/namespace.html#search-path
 library(magrittr) #Pipes
-
+library(TabularManifest)
 # Verify these packages are available on the machine, but their functions need to be qualified: http://r-pkgs.had.co.nz/namespace.html#search-path
 requireNamespace("ggplot2")
 requireNamespace("dplyr") #Avoid attaching dplyr, b/c its function names conflict with a lot of packages (esp base, stats, and plyr).
@@ -31,6 +31,7 @@ generic_path <- "./sandbox/pipeline-demo-1/outputs/generic-data/"
 # ---- load-data ---------------------------------------------------------------
 dto <- readRDS(path_input)
 ds <- dto$unitData
+meta <- dto$metaData
 str(ds)
 ds %>% dplyr::count(study)
 ds <- ds %>% dplyr::filter(study == "MAP ")# keep only MAP
@@ -47,6 +48,9 @@ selected_items <- c(
   "msex", # Gender
   "race", # Participant's race
   "educ", # Years of education
+  "smoking", # every smoked? 0 - never, 1 - former, 2 - current
+  "stroke_cum", # stroke
+  "dm_cum", # diabetes
 
   # time-invariant above
   "fu_year", # Follow-up year ---###---
