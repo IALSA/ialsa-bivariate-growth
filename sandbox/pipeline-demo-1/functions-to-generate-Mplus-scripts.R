@@ -29,18 +29,18 @@ mplus_generator_bivariate <- function(
   #Values for testing and development
   # model_number       = "b1"
   # subgroup           = "male"
-  # model_type         = "aeh"
+  # model_type         = "aehplus"
   # process_a_name     = 'fev'# item name of process (A), goes into file name
   # process_a_mplus    = 'fev'# identifies the variable in Mplus
-  # process_b_name     = 'numbercomp'# item name of process (B), goes into file name
-  # process_b_mplus    = 'cts_nccrtd'# identifies the variable in Mplus
-  # covariate_set      = c("age_c70","edu_c7","htm_c")
-  # wave_set_modeled   = c(1,2,3,4,5)
+  # process_b_name     = 'numbercomparison'# item name of process (B), goes into file name
+  # process_b_mplus    = 'numbercomparison'# identifies the variable in Mplus
+  # covariate_set      = c("age_c70","edu_c7","htm_c", "smoke_ever","stroke_ever","diab_ever")
+  # wave_set_modeled   =  c(1,2,3,4,5, 6,7, 8, 9, 11)
   # subset_condition_1 = "dementia_ever NE 1" # subset data to member of this group
+  # folder_data        = "./data/unshared/derived/map-1"
   # path_prototype     = "./sandbox/pipeline-demo-1/prototype-wide.inp"
-  # folder_data        = "./sandbox/pipeline-demo-1/generic-data"
-  # folder_output      = "./sandbox/pipeline-demo-1/outputs"
-  # run_models         = FALSE # I
+  # folder_output      = "./sandbox/pipeline-demo-1/outputs/"
+  # run_models         = FALSE # If TRUE then Mplus runs estimation to produce .out, .gh5, and/or, other files
 
   model_id  <- paste0(model_number,"_",subgroup,"_",model_type,"_",process_a_name,"_",process_b_name)
   
@@ -58,6 +58,15 @@ mplus_generator_bivariate <- function(
   
   # after modification .inp files will be saved as:
   input_file_name <- paste0(sub_directory,"/", model_id, ".inp")  
+  
+  if(is.numeric(wave_set_modeled)){
+    a <- as.character(wave_set_modeled)
+    for(i in seq_along(a)){
+      a[i] <- ifelse( a[i] %in% paste0(0:9), paste0("0",a[i]),a[i])
+    }
+    wave_set_modeled <- a
+  }
+  
   
   # input the template to work with
   proto_input <- scan(path_prototype, what='character', sep='\n') 
@@ -81,15 +90,15 @@ mplus_generator_bivariate <- function(
   
   # USEVARIABLES are
   # define what variables are used in estimation
-  (estimated_timepoints <- paste0("time",wave_set_modeled))
+  (estimated_timepoints <- paste0("time","_",wave_set_modeled))
   (estimated_timepoints <- paste(estimated_timepoints, collapse="\n"))
   proto_input <- gsub(pattern ="%estimated_timepoints%", replacement = estimated_timepoints, x = proto_input)
 
-  (process_a_timepoints <- paste0("a",wave_set_modeled))
+  (process_a_timepoints <- paste0("a","_",wave_set_modeled))
   (process_a_timepoints <- paste(process_a_timepoints, collapse="\n"))
   proto_input <- gsub(pattern ="%process_a_timepoints%", replacement = process_a_timepoints, x = proto_input)
 
-  (process_b_timepoints <- paste0("b",wave_set_modeled))
+  (process_b_timepoints <- paste0("b","_",wave_set_modeled))
   (process_b_timepoints <- paste(process_b_timepoints, collapse="\n"))
   proto_input <- gsub(pattern ="%process_b_timepoints%", replacement = process_b_timepoints, x = proto_input)
 
@@ -99,30 +108,30 @@ mplus_generator_bivariate <- function(
 
   # USEOBSERVATIONS are 
   # select a subset of observation
-  # TODO: allow for dynamic specification of the grouping variable (msex) and values (0,1)
+  # TODO: allow for dynamic specification of the grouping variable (male) and values (0,1)
   if(subgroup == "male"){
-    print_subgroup_condition <- paste0("msex EQ 1")
+    print_subgroup_condition <- paste0("male EQ 1")
   }
   if(subgroup == "female"){
-    print_subgroup_condition <- paste0("msex EQ 0")
+    print_subgroup_condition <- paste0("male EQ 0")
   }
   if(subgroup == "unisex"){
-    print_subgroup_condition <- paste0("msex EQ 0 | or msex EQ 1 ")
+    print_subgroup_condition <- paste0("male EQ 0 or male EQ 1 ")
   }
   # subset
   proto_input <- gsub("%subgroup_condition%", print_subgroup_condition, proto_input)
   proto_input <- gsub("%subset_condition_1%", subset_condition_1, proto_input)
 
   # DEFINE:
-  (match_timepoints_process_a <- paste0("a",wave_set_modeled,"=",process_a_mplus,"_",wave_set_modeled,";"))
+  (match_timepoints_process_a <- paste0("a","_",wave_set_modeled,"=",process_a_mplus,"_",wave_set_modeled,";"))
   match_timepoints_process_a <- paste(match_timepoints_process_a, collapse="\n")
   proto_input <- gsub(pattern ="%match_timepoints_process_a%", replacement = match_timepoints_process_a, x = proto_input)
 
-  (match_timepoints_process_b <- paste0("b",wave_set_modeled,"=",process_b_mplus,"_",wave_set_modeled,";"))
+  (match_timepoints_process_b <- paste0("b","_",wave_set_modeled,"=",process_b_mplus,"_",wave_set_modeled,";"))
   match_timepoints_process_b <- paste(match_timepoints_process_b, collapse="\n")
   proto_input <- gsub(pattern ="%match_timepoints_process_b%", replacement = match_timepoints_process_b, x = proto_input)
 
-  (match_time_since_bl <- paste0("time",wave_set_modeled,"=", "time_since_bl","_",wave_set_modeled,";"))
+  (match_time_since_bl <- paste0("time","_",wave_set_modeled,"=", "years_since_bl","_",wave_set_modeled,";"))
   match_time_since_bl <- paste(match_time_since_bl, collapse="\n")
   proto_input <- gsub(pattern ="%match_timepoints%", replacement = match_time_since_bl, x = proto_input)
 
@@ -130,27 +139,27 @@ mplus_generator_bivariate <- function(
   # MODEL:
 
   # define process (A) in time points
-  (assing_a_to_timepoints <- paste0("ia sa | a",wave_set_modeled," AT ","time",wave_set_modeled," ;"))
+  (assing_a_to_timepoints <- paste0("ia sa | a","_",wave_set_modeled," AT ","time","_",wave_set_modeled," ;"))
   (assing_a_to_timepoints <- paste(assing_a_to_timepoints, collapse="\n"))
   proto_input <- gsub(pattern ="%assing_a_to_timepoints%", replacement = assing_a_to_timepoints, x = proto_input)
 
   # define process (B) in time points
-  (assing_b_to_timepoints <- paste0("ib sb | b",wave_set_modeled," AT ","time",wave_set_modeled," ;"))
+  (assing_b_to_timepoints <- paste0("ib sb | b","_",wave_set_modeled," AT ","time","_",wave_set_modeled," ;"))
   (assing_b_to_timepoints <- paste(assing_b_to_timepoints, collapse="\n"))
   proto_input <- gsub(pattern ="%assing_b_to_timepoints%", replacement = assing_b_to_timepoints, x = proto_input)
 
   # residual covariance of process (A)
-  (resid_covariance_a <- paste0("a",wave_set_modeled," (res_a);"))
+  (resid_covariance_a <- paste0("a","_",wave_set_modeled," (res_a);"))
   (resid_covariance_a <- paste(resid_covariance_a, collapse="\n"))
   proto_input <- gsub(pattern ="%resid_covariance_a%", replacement = resid_covariance_a, x = proto_input)
 
   # residual covariance of process (B)
-  (resid_covariance_b <- paste0("b",wave_set_modeled," (res_b);"))
+  (resid_covariance_b <- paste0("b","_",wave_set_modeled," (res_b);"))
   (resid_covariance_b <- paste(resid_covariance_b, collapse="\n"))
   proto_input <- gsub(pattern ="%resid_covariance_b%", replacement = resid_covariance_b, x = proto_input)
 
   # residual covariances of processes
-  (resid_covariances <- paste0("a",wave_set_modeled," pwith ", "b", wave_set_modeled," (res_cov);"))
+  (resid_covariances <- paste0("a","_",wave_set_modeled," pwith ", "b","_", wave_set_modeled," (res_cov);"))
   (resid_covariances <- paste(resid_covariances, collapse="\n"))
   proto_input <- gsub(pattern ="%resid_covariances%", replacement = resid_covariances, x = proto_input)
 
