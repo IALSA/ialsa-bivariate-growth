@@ -22,7 +22,8 @@ requireNamespace("reshape2") # data transformations
 path_input  <- "../MAP/data-unshared/derived/dto.rds"
 
 # put test assert here to check the connection.
-generic_path <- "./sandbox/pipeline-demo-1/generic-data/"
+# generic_path <- "./sandbox/pipeline-demo-1/generic-data/"
+generic_path <- "./data/unshared/derived/map-1/"
 
 
 # ---- functions-to-examime-temporal-patterns -------------------
@@ -268,8 +269,8 @@ ds <- ds %>%
   dplyr::mutate(
     age_c70 = age_at_bl - 70,
     edu_c7  = educ - 7,
-    htm_c   = ifelse(     male==0, htm - 1.6,
-                   ifelse(male==1, htm - 1.72,NA))
+    htm_c   = ifelse(     male==0, htm_med - 1.6,
+                   ifelse(male==1, htm_med - 1.72,NA))
   ) 
   
 # ds %>% dplyr::glimpse()
@@ -278,7 +279,7 @@ ds <- ds %>%
 # ---- prepare-for-mplus ---------------------
 varnames_transformed <- c(
   "id","wave","years_since_bl", "male",
-  "age_c70","edu_c7", "htm_c", "diab_ever","stroke_ever", "smoke_ever"
+  "age_c70","edu_c7", "htm_c", "diab_ever","stroke_ever", "smoke_ever","dementia_ever"
 )
 ds_long <- ds %>% 
   dplyr::select_(.dots = c(varnames_transformed, varnames_physical, varnames_cognitive)) 
@@ -287,7 +288,7 @@ ds_long <- ds %>%
 # define variable properties for long-to-wide conversion
 variables_static <- c(
   "id", "male",
-  "age_c70","edu_c7", "htm_c", "diab_ever","stroke_ever", "smoke_ever"
+  "age_c70","edu_c7", "htm_c", "diab_ever","stroke_ever", "smoke_ever", "dementia_ever"
   )
 variables_longitudinal <- setdiff(colnames(ds_long),variables_static)  # not static
 (variables_longitudinal <- variables_longitudinal[!variables_longitudinal=="wave"]) # all except wave
