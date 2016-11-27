@@ -1,7 +1,7 @@
 # knitr::stitch_rmd(script="./manipulation/car-ellis.R", output="./manipulation/stitched-output/car-ellis.md")
 #These first few lines run only when the file is run in RStudio, !!NOT when an Rmd/Rnw file calls it!!
-# rm(list=ls(all=TRUE))  #Clear the variables from previous runs.
-# cat("\f") # cleans console
+rm(list=ls(all=TRUE))  #Clear the variables from previous runs.
+cat("\f") # cleans console
 
 # ---- load-sources ------------------------------------------------------------
 # Call `base::source()` on any repo file that defines functions needed below.  Ideally, no real operations are performed.
@@ -9,164 +9,313 @@ base::source("./scripts/functions-common.R")
 # ---- load-packages -----------------------------------------------------------
 # Attach these packages so their functions don't need to be qualified: http://r-pkgs.had.co.nz/namespace.html#search-path
 library(magrittr) #Pipes
-library(TabularManifest)
+# library(TabularManifest)
 # Verify these packages are available on the machine, but their functions need to be qualified: http://r-pkgs.had.co.nz/namespace.html#search-path
 requireNamespace("ggplot2")
+requireNamespace("tidyr")
 requireNamespace("dplyr") #Avoid attaching dplyr, b/c its function names conflict with a lot of packages (esp base, stats, and plyr).
 requireNamespace("testit")
 requireNamespace("reshape2") # data transformations
-loadNamespace("data.table") # data transformations
 
 # ---- declare-globals ---------------------------------------------------------
 # path_input  <- "./data/unshared/raw/map/ds0.rds"
 path_input  <- "../MAP/data-unshared/derived/dto.rds"
-# path_input  <- "./data-unshared/raw/map/ds0.rds"
-# figure_path <- 'manipulation/stitched-output/te/'
 
 # put test assert here to check the connection.
-generic_path <- "./sandbox/pipeline-demo-1/outputs/generic-data/"
+generic_path <- "./sandbox/pipeline-demo-1/generic-data/"
 
+
+# ---- functions-to-examime-temporal-patterns -------------------
+view_temporal_pattern <- function(ds, measure, seed_value = 42){
+  set.seed(seed_value)
+  ds_long <- ds
+  (ids <- sample(unique(ds_long$id),1))
+  d <-ds_long %>%
+    dplyr::filter(id %in% ids ) %>%
+    dplyr::select_("id","wave", measure)
+  print(d)
+}
+# ds %>%  view_temporal_pattern("male", 2)
+temporal_pattern <- function(ds, measure){
+  # set.seed(seed_value)
+  ds_long <- ds
+  (ids <- sample(unique(ds_long$id),1))
+  d <-ds_long %>%
+    dplyr::filter(id %in% ids ) %>%
+    dplyr::select_("id","wave", measure)
+  print(d)
+}
+
+
+# examine the descriptives over waves
+over_waves <- function(ds, measure_name, exclude_values="") {
+  ds <- as.data.frame(ds)
+  testit::assert("No such measure in the dataset", measure_name %in% unique(names(ds)))
+  # measure_name = "htval"; wave_name = "wave"; exclude_values = c(-99999, -1)
+  cat("Measure : ", measure_name,"\n", sep="")
+  t <- table( ds[,measure_name], ds[,"wave"], useNA = "always"); t[t==0] <- ".";t
+  print(t)
+  cat("\n")
+  ds[,measure_name] <- as.numeric(ds[,measure_name])
+  
+  d <- ds[!(ds[,measure_name] %in% exclude_values), ]
+  a <- lazyeval::interp(~ round(mean(var),2) , var = as.name(measure_name))
+  b <- lazyeval::interp(~ round(sd(var),3),   var = as.name(measure_name))
+  c <- lazyeval::interp(~ n())
+  dots <- list(a,b,c)
+  t <- d %>%
+    dplyr::select_("id","wave", measure_name) %>%
+    na.omit() %>%
+    # dplyr::mutate_(measure_name = as.numeric(measure_name)) %>%
+    dplyr::group_by_("wave") %>%
+    dplyr::summarize_(.dots = setNames(dots, c("mean","sd","count")))
+  return(as.data.frame(t))
+  
+}
 
 
 # ---- load-data ---------------------------------------------------------------
 dto <- readRDS(path_input)
-ds <- dto$unitData
+ds0 <- dto$unitData
 meta <- dto$metaData
-str(ds)
-ds %>% dplyr::count(study)
-ds <- ds %>% dplyr::filter(study == "MAP ")# keep only MAP
-ds %>% dplyr::count(study)
 
+
+# ---- inspect-data -------------------------------------------------------------
+names_labels(ds0)
 
 # ----- subset-variables ------------------------------------
+varnames_design <- c(
+  "id",   # subject identifier
+  "birth_year",
+  "fu_year", # Follow-up year
+  "age_at_bl", #Age at baseline
+  "age_at_visit", # age at visit
+  "date_at_bl",
+  "date_at_visit",
+  "age_death", # age of death
+  "died", # death indicatro, derivative of age_death
+  "firstobs" # first observatio for that person?
+)
+varnames_context <- c(
+  "msex",            # Gender
+  "race",            # Participant's race
+  "educ",            # Years of education
+  "htm",             # Height in meters
+  "smoking",         # 0 - never, 1 - former, 2 - current
+  "stroke_cum",      # Clinical Diagnoses - Stroke - cumulative
+  "dm_cum",          # Medical history - diabetes - cumulative
+  "dementia"         # Dementia diagnosis
+)
+varnames_physical <- c(
+  "fev",             # forced expiratory volume
+  "gait_speed",      # Gait Speed - MAP
+  "gripavg"          # Extremity strength
+)
+varnames_cognitive <- c(
+  "bnt"              # Boston naming
+  ,"bostordel"       # East Boston story - delayed recall
+  ,"bostorim"        # East Boston story - immediate
+  ,"catfluency"      # Category fluency
+  ,"complexideas"    # Complex ideas
+  ,"digitbackward"   # Digits backwards 
+  ,"digitforward"    # Digits forwards 
+  ,"digitorder"      # Digit ordering 
+  ,"lineorientation" # Line orientation -
+  ,"logimemdel"      # Logical memory IIa 
+  ,"logimemim"       # Logical memory Ia - immediate
+  ,"matrices"        # Progressive Matrices -
+  ,"mmse"            # Mini Mental State Examination
+  ,"nart"            # Reading test-NART
+  ,"numbercomparison"# Number comparison
+  ,"symbol"          # Symbol digit modalitities
+  ,"wordlistdel"     # Word list II - delayed 
+  ,"wordlistim"      # Word list I- immediate- 
+  ,"wordlistrecog"   # Word list III - recognition 
+)
+# d <- as.data.frame(ds[ , varnames_cognitive])
 # select variables you will need for modeling, be conservative
 selected_items <- c(
-  "id", # personal identifier
-  "age_bl", #Age at baseline
-  "htm", # Height(meters)
-  "wtkg", # Weight (kilograms)
-  "msex", # Gender
-  "race", # Participant's race
-  "educ", # Years of education
-  "smoking", # every smoked? 0 - never, 1 - former, 2 - current
-  "stroke_cum", # stroke
-  "dm_cum", # diabetes
-
-  # time-invariant above
-  "fu_year", # Follow-up year ---###---
-  # time-variant below
-
-  "age_at_visit", #Age at cycle - fractional
-  "dementia", # Dementia diagnosis
-
-  "cts_bname", # Boston naming - 2014
-  "mmse",  # Mini mental status examination
-  "cts_nccrtd", #  Number comparison - 2014
-
-  "fev", # forced expiratory volume
-  "gait_speed", # Gait Speed - MAP
-  "gripavg" # Extremity strength
+   varnames_design
+  ,varnames_context
+  ,varnames_physical
+  ,varnames_cognitive
 )
+ds <- as.data.frame(ds0[ , selected_items])
 
-# ---- compute-time-difference -------------------------
-d <- as.data.frame(ds[ , selected_items])
-# d <- d[1:10 , c("id","age_bl", "fu_year", "age_at_visit")]
-# d
+# ----- remove-cases ----------------------------------
+# remove cases which do not have recorded date at baseline
+ids_without_date_at_bl <- ds %>% 
+  dplyr::filter(is.na(date_at_bl)) %>% 
+  dplyr::distinct(id) %>% 
+  as.data.frame() 
+ids_without_date_at_bl <- ids_without_date_at_bl[,"id"]
+ds <- ds %>% 
+  dplyr::filter(!id %in% ids_without_date_at_bl)
+ds %>% dplyr::distinct(id) %>% dplyr::count()
 
-d <- d %>%
-  dplyr::group_by(id) %>%
-  dplyr::arrange(fu_year) %>%
-  dplyr::mutate(
-    time_since_bl = (age_at_visit - dplyr::lag(age_at_visit, 1))
-  ) %>%
-  dplyr::ungroup()
-
-# ---- compute-subsetting-conditions ---------------------
-
-d <- d %>%
-  dplyr::group_by(id) %>%
-  dplyr::mutate(dementia_ever = any(dementia==1)) %>%
-  dplyr::ungroup() #%>%
-#dplyr::filter(dementia_ever %in% c(FALSE, NA))
-
-d <- as.data.frame(d)
-table(d$dementia_ever, useNA="always")
-d$dementia_ever <- as.numeric(d$dementia_ever)
-d <- dplyr::tbl_df(d)
-
-# ---- center-covariates ---------------------------------
-d <- d %>%
-  dplyr::mutate(age_c70 = age_bl - 70)  %>%
-  # dplyr::mutate(htm_c160 = htm - 1.6)  %>%
-  dplyr::mutate(
-    htm_c = ifelse(msex==0, htm - 1.6,
-                   ifelse(msex==1,htm - 1.72,NA))
-  ) %>% 
-  dplyr::mutate(edu_c7 = educ - 7)
-
-d %>% dplyr::glimpse()
-
-
-# ---- remove-missing-observations -----------------------------
 # remove observations with missing values on the time variable
 table(d$fu_year, useNA = "always")
-d <- d %>% dplyr::filter(!is.na(fu_year))
+ds <- ds %>% dplyr::filter(!is.na(fu_year))
 table(d$fu_year, useNA = "always")
 
-# ---- long_to_wide -----------------------------------------
-# long to wide conversion might rely on the classification given to the variables with respect to time : variant or invariant
-# should this classification be manual or automatic?
 
-dw <- data.table::dcast(data.table::setDT(d), id + age_bl + age_c70 + htm + htm_c + wtkg + msex + race + educ + edu_c7 + dementia_ever ~ fu_year, value.var = c(
-  "age_at_visit", #Age at cycle - fractional
-  "time_since_bl", # time elapsed since the baseline
-  "dementia", # Dementia diagnosis
-
-  "cts_bname", # Boston naming - 2014
-  "mmse",  # Mini mental status examination
-  "cts_nccrtd", #  Number comparison - 2014
-
-  "fev", # forced expiratory volume
-  "gait_speed", # Gait Speed - MAP
-  "gripavg" # Extremity strength
+# ---- tweak-data -------------------
+ds <- ds %>% 
+  dplyr::mutate(
+    wave = fu_year,
+    male = as.logical(ifelse(!is.na(msex),msex==1, NA_integer_)),
+    years_since_bl = as.double((date_at_visit - date_at_bl)/365)
+  )
 
 
-))
+
+# ---- compute-history-measures ---------------------
+# view_temporal_pattern(ds,"dementia",seed_value = 42)
+ds <- ds %>%
+  dplyr::group_by(id) %>%
+  dplyr::mutate(
+    dementia_ever = any(dementia==1),
+    smoke_ever    = any(smoking %in% c(1,2)),
+    stroke_ever   = any(stroke_cum==1),
+    diab_ever     = any(dm_cum == 1)
+    ) %>%
+  dplyr::ungroup() #%>%
+
+
+# ---- force-to-static-sex ---------------------------
+ds %>% view_temporal_pattern("male", 42) # sex
+ds %>% over_waves("male") # 1, 2, 3, 4, 5, 6
+# check that values are the same across waves
+ds %>%
+  dplyr::group_by(id) %>%
+  dplyr::summarize(unique = length(unique(male))) %>%
+  dplyr::arrange(desc(unique)) # unique > 1 indicates change over wave
+# grab the value for the first wave and forces it to all waves
+ds <- ds %>%
+  dplyr::group_by(id) %>%
+  dplyr::mutate(
+    male   = dplyr::first(male) # grabs the value for the first wave and forces it to all waves
+  ) %>%
+  dplyr::ungroup()
+# examine the difference
+ds %>% over_waves("male")
+ds %>% view_temporal_pattern("male", 2) # sex
+
+# ---- force-to-static-education ---------------------------
+ds %>% view_temporal_pattern("educ", 42) # sex
+ds %>% over_waves("educ") # 1, 2, 3, 4, 5, 6
+# check that values are the same across waves
+ds %>%
+  dplyr::group_by(id) %>%
+  dplyr::summarize(unique = length(unique(educ))) %>%
+  dplyr::arrange(desc(unique)) # unique > 1 indicates change over wave
+# edu is truely time-invariant
+ds <- ds %>% dplyr::mutate( edu_bl = educ)
+ds %>% over_waves("edu_bl")
+
+# ---- force-to-static-height ---------------------------
+ds %>% view_temporal_pattern("htm", 2)
+ds %>% over_waves("htm"); # 2, 4, 6
+# check that values are the same across waves
+ds %>%
+  dplyr::group_by(id) %>%
+  dplyr::summarize(unique = length(unique(htm))) %>%
+  dplyr::arrange(desc(unique)) # unique > 1 indicates change over wave
+# grab the value for the first wave and forces it to all waves
+ds <- ds %>%
+  dplyr::group_by(id) %>%
+  # compute median height across lifespan
+  dplyr::mutate(
+    htm_med   = median(htm, na.rm =T) # grabs the value for the first wave and forces it to all waves
+  ) %>%
+  dplyr::ungroup()
+# examine the difference
+ds %>% view_temporal_pattern("htm_med", 2)
+
+
+
+# ---- force-to-static-smoke ---------------------------
+ds %>% temporal_pattern("smoke_ever")
+ds %>% over_waves("smoke_ever") # 1, 2, 3, 4, 5, 6
+# check that values are the same across waves
+ds %>%
+  dplyr::group_by(id) %>%
+  dplyr::summarize(unique = length(unique(smoke_ever))) %>%
+  dplyr::arrange(desc(unique)) # unique > 1 indicates change over wave
+
+# ---- force-to-static-cardio ---------------------------
+ds %>% temporal_pattern("stroke_ever")
+# ds %>% over_waves("stroke_cum") 
+ds %>% over_waves("stroke_ever") 
+# check that values are the same across waves
+ds %>%
+  dplyr::group_by(id) %>%
+  dplyr::summarize(unique = length(unique(stroke_ever))) %>%
+  dplyr::arrange(desc(unique)) # unique > 1 indicates change over wave
+
+
+# ---- force-to-static-diabetes ---------------------------
+ds %>% temporal_pattern("diab_ever")
+ds %>% over_waves("diab_ever") # 1, 2
+# check that values are the same across waves
+ds %>%
+  dplyr::group_by(id) %>%
+  dplyr::summarize(unique = length(unique(diab_ever))) %>%
+  dplyr::arrange(desc(unique)) # unique > 1 indicates change over wave
+
+# ---- center-covariates ---------------------------------
+ds <- ds %>%
+  dplyr::mutate(
+    age_c70 = age_at_bl - 70,
+    edu_c7  = educ - 7,
+    htm_c   = ifelse(     male==0, htm - 1.6,
+                   ifelse(male==1, htm - 1.72,NA))
+  ) 
+  
+# ds %>% dplyr::glimpse()
+
+
+# ---- prepare-for-mplus ---------------------
+varnames_transformed <- c(
+  "id","wave","years_since_bl", "male",
+  "age_c70","edu_c7", "htm_c", "diab_ever","stroke_ever", "smoke_ever"
+)
+ds_long <- ds %>% 
+  dplyr::select_(.dots = c(varnames_transformed, varnames_physical, varnames_cognitive)) 
+                
+
+# define variable properties for long-to-wide conversion
+variables_static <- c(
+  "id", "male",
+  "age_c70","edu_c7", "htm_c", "diab_ever","stroke_ever", "smoke_ever"
+  )
+variables_longitudinal <- setdiff(colnames(ds_long),variables_static)  # not static
+(variables_longitudinal <- variables_longitudinal[!variables_longitudinal=="wave"]) # all except wave
+# establish a wide format
+ds_wide <- ds_long %>%
+  # dplyr::select(id, wave, animals, word_recall_de ) %>%
+  # gather(variable, value, -(id:wave)) %>%
+  dplyr::select_(.dots=c(variables_static, "wave", variables_longitudinal)) %>%
+  tidyr::gather_(key="variable", value="value", variables_longitudinal) %>%
+  dplyr::mutate(wave = as.character(wave)) %>%
+  dplyr::mutate(wave = ifelse( wave %in% paste0(0:9), paste0("0",wave),wave)) %>%
+  dplyr::mutate(wave = paste0("t", wave)) %>%
+  tidyr::unite(temp, variable, wave) %>%
+  tidyr::spread(temp, value)
+ds_wide %>% dplyr::glimpse()
+# prepare data to be read by MPlus
+ds_mplus <- lapply(ds_wide,as.numeric)
+ds_mplus[is.na(ds_mplus)] <- -9999 # replace NA with a numerical code
+ds_mplus %>% dplyr::glimpse()
+
+
+
 
 # ---- save-r-data -------------------
-saveRDS(d,paste0(generic_path,"data-long.rds"))
-saveRDS(dw,paste0(generic_path,"data-wide.rds"))
-
-# ---- recode-missing-values --------------
-# this step makes sense only in the context of preparing data for use in Mplus
-
-# set.seed(42)
-# random_subset <- sample(unique(dw$id), size = 500)
-# dw <- dw[d$id %in% random_subset, ]
-
-dw[is.na(dw)] <- -9999
-dw %>% dplyr::glimpse()
-table(dw$age_centered_70, useNA = "always")
-
-
-
-# dw %>% dplyr::glimpse()
-# ---- save-generic-data ---------------------
-
-write.table(d,paste0(generic_path,"/long-dataset.dat"), row.names=F, col.names=F)
-write(names(d), paste0(generic_path,"/long-variable-names.txt"), sep=" ")
-
-write.table(dw, paste0(generic_path,"/wide-dataset.dat"), row.names=F, col.names=F)
-write(names(dw), paste0(generic_path,"/wide-variable-names.txt"), sep=" ")
-
-
-# ---- export_data -------------------------------------
-# At this point we would like to export the data in .dat format
-# to be fed to Mplus for any subsequent modeling
-saved_location <- "./sandbox/pipeline-demo-1/outputs/grip-mmse/"
-
-write.table(d,paste0(saved_location,"/long-dataset.dat"), row.names=F, col.names=F)
-write(names(d), paste0(saved_location,"/long-variable-names.txt"), sep=" ")
-
-write.table(dw, paste0(saved_location,"/wide-dataset.dat"), row.names=F, col.names=F)
-write(names(dw), paste0(saved_location,"/wide-variable-names.txt"), sep=" ")
+# tranformed data with supplementary variables
+saveRDS(ds,paste0(generic_path,"data-long-plus.rds"))
+# only variables used in analysis
+saveRDS(ds_long,paste0(generic_path,"data-long.rds"))
+# prepared for Mplus
+write.table(ds_mplus, paste0(generic_path,"/wide-dataset.dat"), row.names=F, col.names=F)
+write(names(ds_mplus), paste0(generic_path,"/wide-variable-names.txt"), sep=" ")
