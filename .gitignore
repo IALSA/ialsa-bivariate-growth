@@ -15,6 +15,11 @@
 /sandbox/syntax-creator/outputs/*/*.dat
 
 
+output/*
+output/*/*
+output/*/*/*
+output/*/*/*/*
+output/*/*/*/*/*
 
 # Dataset Exceptions
 !utility/package-dependency-list.csv
