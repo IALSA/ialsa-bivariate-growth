@@ -172,6 +172,7 @@ ds <- ds %>%
 
 # ---- compute-history-measures ---------------------
 # view_temporal_pattern(ds,"dementia",seed_value = 42)
+# temporal_pattern(ds,"dementia")
 ds <- ds %>%
   dplyr::group_by(id) %>%
   dplyr::mutate(
@@ -216,6 +217,7 @@ ds %>% over_waves("edu_bl")
 
 # ---- force-to-static-height ---------------------------
 ds %>% view_temporal_pattern("htm", 2)
+ds %>% temporal_pattern("htm")
 ds %>% over_waves("htm"); # 2, 4, 6
 # check that values are the same across waves
 ds %>%
