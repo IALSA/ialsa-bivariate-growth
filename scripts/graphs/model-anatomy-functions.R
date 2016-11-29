@@ -1,9 +1,11 @@
-rm(list=ls(all=TRUE)) #Clear the memory of variables from previous run. This is not called by knitr, because it's above the first chunk.
+# rm(list=ls(all=TRUE)) #Clear the memory of variables from previous run. This is not called by knitr, because it's above the first chunk.
 
-source("./scripts/mplus/group-variables.R")
-source("./scripts/mplus/extraction-functions.R")
-source("./scripts/mplus/mplus.R")
-source("./scripts/graphs/main_theme.R") # pre-sets and options for graphing
+# source("./scripts/mplus/model-components.R")
+
+# source("./scripts/mplus/group-variables.R")
+# source("./scripts/mplus/extraction-functions.R")
+# source("./scripts/mplus/mplus.R")
+# source("./scripts/graphs/main_theme.R") # pre-sets and options for graphing
 # path <- "./data/shared/covariance-issue/annie/studies/octo/physical/b1_female_aehplus_grip_gait.out"
 # model_parsed <- collect_result(path)
 # mode_parsed_spread <-
@@ -11,13 +13,95 @@ source("./scripts/graphs/main_theme.R") # pre-sets and options for graphing
 
 # baseSize = 10
 
+#######################
+#### Table ###########
+#####################
+
+# stencil <- readr::read_csv("./data/shared/tables/study-specific-stencil-v9.csv")
+
+proto_table <- function(
+  # d, study_name_, subgroup_, process_a_, process_b_, model_type_, pretty_=T
+  model_parsed,
+  model_components,
+  pretty = T
+){
+    pattern_est   <- c("intercept"= "%0.2f"       ,"slope" = "%0.2f")
+    pattern_se    <- c("intercept"= "%0.2f"       ,"slope" = "%0.2f")
+    pattern_dense <- c("intercept"= "%6s(%4s),%7s","slope" = "%6s(%4s),%7s")
+
+    stencil$label <- format(stencil$label, justify = "left")
+    model_key <- stencil$full_name
+    model_key_labels <- stencil$label
+
+    single_model <- distill_one_spread(model_parsed, model_components) %>%
+      dplyr::mutate(
+        full_name     = paste0(process,"_",coefficient,"_",subindex)
+      )
+
+    (subject_count_ <- single_model$subject_count[1])
+    (AIC_ <- single_model$aic[1])
+    (BIC_ <- single_model$bic[1])
+    (LL_ <- single_model$ll[1])
+
+    model_info <- data.frame(
+      type = "",
+      process = "",
+      label = c("N", "AIC", "BIC"),
+      est = as.double(c(subject_count_, AIC_, BIC_)),
+      stringsAsFactors = FALSE)
+
+    d2 <- dplyr::left_join(stencil, single_model, by = "full_name") %>%
+      dplyr::mutate(process = process.y) %>%
+      dplyr::select(type, process, label,est, se, pval, - process.y)
+
+    if(pretty){
+      d2 <- d2 %>%
+        dplyr::mutate(
+          # subject_count = scales::comma(subject_count),
+          est_pretty    = sprintf(pattern_est[1], est),
+          se_pretty     = sprintf(pattern_se[1], se),
+          pval_pretty   = sprintf("%0.2f", pval), #Remove leading zero from p-value.
+          pval_pretty   = ifelse(pval>.99, ".99", sub("^0(.\\d+)$", "\\1", pval_pretty)), #Cap p-value at .99
+          # pval_pretty   = sprintf("*p*=%s", pval_pretty),
+          pval_pretty   = sprintf("p=%s", pval_pretty),
+          # pval_pretty   = ifelse(pval_pretty=="*p*=.00", "*p*<.01", pval_pretty),       #Cap p-value at .01
+          # pval_pretty   = ifelse(pval_pretty=="*p*=NA" , "*p*= NA", pval_pretty),       #Pad NA with space
+          pval_pretty   = ifelse(pval_pretty=="p=.00", "p<.01", pval_pretty),       #Cap p-value at .01
+          pval_pretty   = ifelse(pval_pretty=="p=NA" , "p= NA", pval_pretty),       #Pad NA with space
+
+          pattern       = pattern_dense[1],
+          dense         = sprintf(pattern, est_pretty, se_pretty, pval_pretty),
+          # dense         = ifelse(is.na(est), "--,*p*=  ----", dense)
+          dense         = ifelse(is.na(est), "--,p=  ----", dense)
+        ) %>%
+        dplyr::select(type, process, label, dense)
+
+      model_info <- model_info %>%
+        dplyr::rename(dense =  est) %>%
+        dplyr::mutate(dense = scales::comma(dense,0))
+
+      # d3 <- dplyr::bind_rows(d2,model_info )
+      d3 <- dplyr::bind_rows(model_info,d2 )
+    }else{
+      # d3 <- dplyr::bind_rows(d2,model_info )
+      d3 <- dplyr::bind_rows(model_info,d2 )
+    }
+    # d3[is.na(d3$process),"process"] <- "\\ "
+    # d3[is.na(d3$type),"type"] <- "\\ "
+    # print(d3, n= nrow(d3))
+    return(as.data.frame(d3))
+
+  }
+# Usage
+# proto_table(model_parsed, model_components, F)
+
 ########################
 ##### Data   ###########
 #######################
 
 get_model_data <- function(
-  folder,
   path_out,
+  model_components,
   center_age
 
 ){
@@ -25,15 +109,20 @@ get_model_data <- function(
   # path_out ="b1_female_aehplus_grip_gait.out"
   # center_age = 70
 
-  (out_path <- file.path(folder,path_out))
-  model_parsed <- collect_result(out_path)
+
+  model_parsed <- collect_result(path_out)
   model_parsed <- rename_columns_in_catalog(model_parsed)
+  model_parsed_spread <- distill_one_spread(model_parsed, model_components)
 
   (path_gh5 <- gsub(".out",".gh5", model_parsed$file_path))
   testit::assert(".gh5 file does not exist", file.exists(path_gh5) )
 
-  mplus.view.plots(path_gh5) # read in a .gh5 file
-  (gh5_variables<- mplus.list.variables(path_gh5)) # inspect variables in .gh5
+  # mplus.view.plots(path_gh5) # read in a .gh5 file
+  invisible(capture.output(
+    gh5_variables <- mplus.list.variables(path_gh5)# inspect variables in .gh5
+  )) # inspect variables in .gh5
+
+
   # extract observed individual - level data from .gh5
   ds_obs <- as.data.frame(t(mplus.get.data(path_gh5,gh5_variables)))
   (names(ds_obs) <- gh5_variables)
@@ -83,7 +172,7 @@ get_model_data <- function(
 
   # Compute predictions from factor scores
   ds$process_a_fs <- ds$IP + (ds$SP * ds$time)
-  ds$process_b_fs <- ds$IC + (ds$SC * ds$time);head(ds)
+  ds$process_b_fs <- ds$IC + (ds$SC * ds$time)
   head(ds)
   # dsL <- tidyr::gather_(ds,"outcome", "observed", c("physical_observed", "cognitive_observed","physical_fscores", "cognitive_fscores"));head(dsL)
   d <- ds[ ,-which(names(ds) %in% c("process_a_fs","process_b_fs"))] # drop columns by name
@@ -110,21 +199,23 @@ get_model_data <- function(
 
   ls <- list()
   ls[["data"]] <- dsL
-  ls[["coefs"]] <- model_parsed
+  ls[["catalog"]] <- model_parsed
+  ls[["spread"]] <- model_parsed_spread
   return(ls)
 
 }
 
-folder <- "./sandbox/syntax-creator/outputs/grip-mmse"
-ls_model <- get_model_data(
-  folder = folder
-  # ,path_out ="b1_female_aehplus_grip_gait.out"
-  # ,path_out ="b1_female_aehplus_pef_gait.out"
-  ,path_out ="b1_female_aehplus_grip_pef.out"
-  ,center_age = 70
-)
+# Usage:
+# folder <- "./data/shared/covariance-issue/annie/studies/octo/physical"
+# ls_model <- get_model_data(
+#   folder = folder
+#   # ,path_out ="b1_female_aehplus_grip_gait.out"
+#   # ,path_out ="b1_female_aehplus_pef_gait.out"
+#   ,path_out ="b1_female_aehplus_grip_pef.out"
+#   ,center_age = 70
+# )
 # head(ls_model$data)
-# t(ls_model$coefs)
+# t(ls_model$catalog)
 
 
 ########################
@@ -133,15 +224,15 @@ ls_model <- get_model_data(
 
 
 proto_scatter <- function(
-  d,
+  ls,
   xName,
   yName
 ){
   # xName = "fs_level_a"
   # yName = "fs_level_b"
-
-  # d = ls_model$data
-  # model_parsed <- ls_model$coefs
+  # browser()
+  d <- ls$data
+  # model_parsed <- ls_model$catalog
   (minx <- min(d[,xName],na.rm = T))
   (miny <- min(d[,yName],na.rm = T))
 
@@ -150,10 +241,14 @@ proto_scatter <- function(
   #See Recipe 5.9 in Chang, 2013
   eqn <- as.character(
     as.expression(
-      substitute(italic(y)==a + b * italic(x) * "," ~ ~italic(r) ~ "=" ~ r2,
-                 list(a=format(coef(m)[1], digits=3),#The intercept
-                      b=format(coef(m)[2], digits=3), #The slope
-                      r2=format(sqrt(summary(m)$r.squared), digits=3)))
+      substitute(
+        italic(y) == a + b * italic(x) * "," ~ ~italic(r) ~ "=" ~ r2,
+        list(
+          a  = format(coef(m)[1], digits=3),#The intercept
+          b  = format(coef(m)[2], digits=3), #The slope
+          r2 = format(sqrt(summary(m)$r.squared), digits=3)
+        )
+      )
     )
   )
 
@@ -169,20 +264,21 @@ proto_scatter <- function(
   # g
 
 }
+# Usage:
 # proto_scatter(ls_model$data, "fs_level_a", "fs_level_b")
 
 factor_score_scatter <- function(
   ls
 ){
-  d = ls_model$data
-  mp <- ls_model$coefs # model parsed
+  d <- ls$data
+  mp <- ls$catalog # model parsed
   head(d)
 
-  (study      = mp$study_name)
-  (subgroup   = mp$subgroup)
-  (model_type = mp$model_type)
-  (process_a  = mp$process_a)
-  (process_b  = mp$process_b)
+  (study_name      = mp$study_name)
+  (subgroup        = mp$subgroup)
+  (model_type      = mp$model_type)
+  (process_a_name  = mp$process_a)
+  (process_b_name  = mp$process_b)
 
   (sample_N <- length(unique(d$id)))
 
@@ -238,25 +334,34 @@ factor_score_scatter <- function(
   # browser()
   # create_the_duo <- function(){
 
-  (a <- proto_scatter(d,x="fs_level_b", y="fs_level_a") + theme(legend.position="none") +
+  (a <- proto_scatter(ls,x="fs_level_b", y="fs_level_a") + theme(legend.position="none") +
     annotate(geom="text", size=baseSize-6, x=Inf, y=Inf, label=p1_display, hjust=1, vjust=1)+
     geom_vline(xintercept=b_gamma_00_est,  color="gray60", size=3, alpha=.15)+
     annotate("text", size=baseSize-6, label="symbol(gamma[0][0])", x=b_gamma_00_est, y=min_i1, hjust=.5, vjust=1.5, parse=TRUE, size=7, color="black") +
     geom_hline(yintercept=a_gamma_00_est,  color="grey", size=3, alpha=.15)+ #coord_flip()+
     annotate("text", size=baseSize-6, label="symbol(gamma[0][0])", y=a_gamma_00_est, x=min_i2, hjust=1, vjust=0.5, parse=TRUE, size=7, color="black") +
-    labs(x= process_b, y= process_a,title= "LEVELS \n (estimated factor scores)" ))
+    labs(x= process_b_name, y= process_a_name,title= "LEVELS \n (estimated factor scores)" )+
+    theme(
+      # legend.justification=c(.8,0),
+      legend.position=c(-.13,1), #"left",
+      legend.direction="vertical",
+      legend.background = element_rect(fill=NA,color=NA))
+    )
 
-  (b <- proto_scatter(d,x="fs_slope_b", y="fs_slope_a")+
+  (b <- proto_scatter(ls,x="fs_slope_b", y="fs_slope_a")+
     annotate(geom="text", size=baseSize-6, x=Inf, y=Inf, label=p2_display, hjust=1, vjust=1)+
     geom_vline(xintercept=b_gamma_10_est,  color="gray60", size=3, alpha=.2)+
     annotate("text",  size=baseSize-6, label="symbol(gamma[1][0])", x=b_gamma_10_est, y=min_s1, hjust=.5, vjust=1.5, parse=TRUE, size=7, color="black") +
     geom_hline(yintercept=a_gamma_10_est,  color="grey", size=3, alpha=.2)+
     annotate("text", size=baseSize-6, label="symbol(gamma[1][0])", y=a_gamma_10_est, x=min_s2, hjust=1, vjust=0.5, parse=TRUE, size=7, color="black") +
-    labs(x=  process_b, y= process_a,title= "SLOPES \n (estimated factor scores)" )+
-    theme(legend.justification=c(.8,0),
-          legend.position=c(0,.98),
-          legend.direction="horizontal",
-          legend.background = element_rect(fill=NA,color=NA)))
+    labs(x=  process_b_name, y= process_a_name,title= "SLOPES \n (estimated factor scores)" )+
+    theme(legend.position="none")
+    # theme(
+    #   # legend.justification=c(.8,0),
+    #       legend.position=c(-1.15,1),#"right",
+    #       legend.direction="vertical",
+    #       legend.background = element_rect(fill=NA,color=NA))
+  )
   # }
   # browser()
   # if((process_a=="fev" & process_b=="grip") |
@@ -270,71 +375,246 @@ factor_score_scatter <- function(
   vpLayout <- function(rowIndex, columnIndex) { return( viewport(layout.pos.row=rowIndex, layout.pos.col=columnIndex) ) }
   grid::grid.newpage()
   #Defnie the relative proportions among the panels in the mosaic.
-  layout <- grid::grid.layout(nrow=1, ncol=3,
-                              widths=grid::unit(c(.1, .5, .5) ,c("null","null")),
-                              heights=grid::unit(c( 1), c("null"))
+  layout <- grid::grid.layout(nrow=2, ncol=3,
+                              widths=grid::unit(c(.04,.48, .48) ,c("null","null","null")),
+                              heights=grid::unit(c(.05,.95), c("null"))
   )
   grid::pushViewport(grid::viewport(layout=layout))
   # main_title <- toupper(dsL$study_name[1])
-  main_title <- paste0(toupper(mp$study_name), " \n ", mp$subgroup, " \n ",
-                       "N = ", sample_N)
-  grid.text(main_title, vp = viewport(layout.pos.row = 1, layout.pos.col = 1))
-  print(a, vp=grid::viewport(layout.pos.row=1,layout.pos.col=2))
-  print(b, vp=grid::viewport(layout.pos.row=1,layout.pos.col=3))
+  # main_title <- paste0(toupper(mp$study_name), " \n ", mp$subgroup, " \n ",
+  #                      "N = ", sample_N)
+  main_title <- paste0(
+    toupper(study_name)," - ",
+    subgroup," - ",
+    model_type," ( ",
+    process_a_name, " - ", process_b_name, " ) ",
+    " N = ", sample_N)
+  grid.text(main_title, vp = viewport(layout.pos.row = 1, layout.pos.col = 1:3))
+  print(a, vp=grid::viewport(layout.pos.row=2,layout.pos.col=2))
+  print(b, vp=grid::viewport(layout.pos.row=2,layout.pos.col=3))
   return(grid::popViewport(0))
 }
+# Usage:
 # factor_score_scatter(ls_model)
 
 
 
-factor_score_scatter(ls_model)
+# factor_score_scatter(ls_model)
 
 ########################
 ##### Lines ############
 #######################
 
 proto_line <- function(
-  ls,
-  x,
-  y,
-  outcome_name,
-  fill
+  ls, # list object with extracted data (.gh5) and parsed coefficients (.out)
+  x, # mapped to x-axis
+  outcome_name, # one of the two processes: process_a or process_b
+  source_name, # observed or reconstructed from factor scores: observed or fscores
+  fill # mapped to the color of dots: wave or BAGE
 ){
-  # x="time"
-  # y="value"
-  # outcome_name="process_a"
-  # fill="wave"
-  (subgroup <- ls_model$coefs$subgroup)
+  # x            ="age"
+  # outcome_name ="process_b"
+  # source_name  ="fscores"
+  # fill         ="wave"
+  # get data from the list object
+  # d <- ls_model$data
+  # d <- ls_model$data
+  d <- ls$data #%>% dplyr::filter(id %in% sample(id,10))
 
-  d <- ls_model$data %>%
+  d1 <- d %>%
+    dplyr::filter(outcome == outcome_name) %>%
     dplyr::mutate(
       wave = factor(wave)
     )
+  # d1 <- d1 %>%  dplyr::filter(id %in% sample(id,50))
   # compute min and max to harmonize the graphs
-  d_obs <- d %>% dplyr::filter(source == "observed", outcome == outcome_name)
-  d_fs  <- d %>% dplyr::filter(source == "fscores", outcome  == outcome_name)
-  (ymax <- ceiling( max( max(d_obs$value,na.rm = T)*1.05, max(d_fs$value,na.rm = T)*1.05 )))
-  (ymin <- floor( min( min(d_obs$value,na.rm = T)*.95, min(d_fs$value,na.rm = T)*.95 ) ))
+  (ymax <- ceiling(max(d1$value, na.rm = T)*1.05))
+  (ymin <- floor(min(d1$value, na.rm = T)*.95))
+  d2 <- d1 %>%
+    dplyr::filter(source == source_name)
 
-  g <- ggplot2::ggplot(d,aes_string(x=x, y=y, fill=fill, group="id")) +
+  g <- ggplot2::ggplot(d2,aes_string(x=x, y="value", fill=fill, group="id")) +
     geom_smooth(method="lm", color=alpha("grey70",.6), na.rm=T, se=F) +
     geom_point(shape=21,size=3, alpha=.4)+
-    geom_smooth(aes(group=subgroup),method="loess", color="blue", size=1, fill="gray80", alpha=.3, na.rm=T) +
+    # the group arguments seems to malfunction, yet produce correct image. investigate
+    geom_smooth(aes(group='id'),method="loess", color="blue", size=1, fill="gray80", alpha=.3, na.rm=T) +
     scale_y_continuous(limits=c(ymin, ymax))+
-    # geom_line()+
-    # facet_grid(outcome~.)+
+    # this scale will be added in the complex plot, here now for testing and looking
     # scale_fill_gradient2(low="#7fbf7b", mid="#f7f7f7", high="#af8dc3", space="Lab")+
     main_theme
   g
 }
+# Usage:
+# proto_line(
+#   ls           = ls_model,    # list object with extracted data and parsed coefficients
+#   x            = "time",       # mapped to x-axis. Options: age, time
+#   outcome_name = "process_b", # mapped to y-axis. Options: process_a, process_b
+#   source_name  = "observed",   # observed or reconstructed from factor scrores: observed or fscrores
+#   fill         = "wave"       # color of dots.    Options:  wave, BAGE
+# )
 
-proto_line(
-  ls = ls_model,
-  x = "age",
-  y = "value",
-  outcome_name = "process_b",
-  fill = "wave"
-)
+
+# complext line
+observed_predicted <- function(
+  ls
+){
+
+  # function for stripping legends from plots
+  g_legend<-function(a.gplot){
+    tmp <- ggplot_gtable(ggplot_build(a.gplot))
+    leg <- which(sapply(tmp$grobs, function(x) x$name) == "guide-box")
+    legend <- tmp$grobs[[leg]]
+    legend
+  }
+
+  # ls <- ls_model
+  d <- ls$data
+  (sample_N <- length(unique(d$id)))
+  (study_name <- ls$catalog$study_name)
+  (subgroup <- ls$catalog$subgroup)
+  (model_type <- ls$catalog$model_type)
+  (process_a_name <- ls$catalog$process_a)
+  (process_b_name <- ls$catalog$process_b)
+
+  # build graphs for the first (1) row
+  g11 <- proto_line(ls,
+                   x            = "time",
+                   outcome_name = "process_a",
+                   source_name  = "observed",
+                   fill         = "wave")
+  g12 <- proto_line(ls,
+                   x            = "time",
+                   outcome_name = "process_a",
+                   source_name  = "fscores",
+                   fill         = "wave")
+  g13 <- proto_line(ls,
+                   x            = "age",
+                   outcome_name = "process_a",
+                   source_name  = "observed",
+                   fill         = "BAGE")
+  g14 <- proto_line(ls,
+                   x            = "age",
+                   outcome_name = "process_a",
+                   source_name  = "fscores",
+                   fill         = "BAGE")
+
+  # build graphs for the second (2) row
+  g21 <- proto_line(ls,
+                   x            = "time",
+                   outcome_name = "process_b",
+                   source_name  = "observed",
+                   fill         = "wave")
+  g22 <- proto_line(ls,
+                   x            = "time",
+                   outcome_name = "process_b",
+                   source_name  = "fscores",
+                   fill         = "wave")
+  g23 <- proto_line(ls,
+                   x            = "age",
+                   outcome_name = "process_b",
+                   source_name  = "observed",
+                   fill         = "BAGE")
+  g24 <- proto_line(ls,
+                   x            = "age",
+                   outcome_name = "process_b",
+                   source_name  = "fscores",
+                   fill         = "BAGE")
+
+  legend_age <- g_legend(g11)
+  legend_wave <- g_legend(g13)
+
+  g11 <- g11 +
+   labs(title="Observed",y=process_a_name, x = element_blank())+
+   theme(legend.position="none")
+
+  g12 <- g12 +
+    labs(title="Reconstructed",y=process_a_name, x = element_blank())+
+   theme(legend.position="none")
+
+  g13 <- g13 +
+    labs(title="Observed",y=process_a_name, x = element_blank())+
+    theme(legend.position="none") +
+    scale_fill_gradient2(low="#7fbf7b", mid="#f7f7f7", high="#af8dc3", space="Lab")
+
+  g14 <- g14 +
+    labs(title="Reconstructed",y=process_a_name, x = element_blank())+
+    theme(legend.position="none") +
+    scale_fill_gradient2(low="#7fbf7b", mid="#f7f7f7", high="#af8dc3", space="Lab")
+
+  g21 <- g21 +
+    labs(y=process_b_name)+
+    theme(legend.position="none")
+    # theme(
+    #   # legend.justification=c(3,0),
+    #       legend.position="left",
+    #       legend.direction="vertical",
+    #       legend.background = element_rect(fill=NA,color=NA))
+
+  g22 <- g22 +
+    labs(y=process_b_name)+
+    theme(legend.position="none")+
+    # guides(shape=guide_legend(override.aes=list(size=5)))+
+    theme(
+      # legend.justification=c(.6,-.1),
+          legend.position=c(-.1,-.23),
+          legend.direction="horizontal",
+          legend.background = element_rect(fill=NA,color=NA))
+
+
+  g23 <- g23 +
+    labs(y=process_b_name)+
+    theme(legend.position="none")+
+    scale_fill_gradient2(low="#7fbf7b", mid="#f7f7f7", high="#af8dc3", space="Lab")#+
+
+
+  g24 <- g24 +
+    labs(y=process_b_name)+
+    theme(legend.position="none")+
+    scale_fill_gradient2(low="#7fbf7b", mid="#f7f7f7", high="#af8dc3", space="Lab")+
+  theme(
+    # legend.justification=c(0,0),
+    legend.position=c(-.2,-.25),# "bottom",
+    legend.direction="horizontal",
+    legend.background = element_rect(fill=NA,color=NA))
+
+
+
+  blankPlot <- ggplot()+geom_blank(aes(1,1)) +
+    cowplot::theme_nothing()
+
+  vpLayout <- function(rowIndex, columnIndex) { return( viewport(layout.pos.row=rowIndex, layout.pos.col=columnIndex) ) }
+  grid::grid.newpage()
+  #Defnie the relative proportions among the panels in the mosaic.
+  layout <- grid::grid.layout(nrow=4, ncol=4,
+                              widths=grid::unit(c(.25, .25, .25, .25) ,c("null","null","null","null")),
+                              # heights=grid::unit(c(.04, .48,.48), c("null", "null", "null"))
+                              heights=grid::unit(c(.05, .45, .45,.05), c("null", "null", "null","null"))
+  )
+  grid::pushViewport(grid::viewport(layout=layout))
+  main_title <- paste0(
+    toupper(study_name)," - ",
+    subgroup," - ",
+    model_type," ( ",
+    process_a_name, " - ", process_b_name, " ) ",
+    " N = ", sample_N)
+
+  grid.text(main_title, vp = viewport(layout.pos.row = 1, layout.pos.col = 1:4))
+  print(g11, vp=grid::viewport(layout.pos.row=2, layout.pos.col=1))
+  print(g12, vp=grid::viewport(layout.pos.row=2, layout.pos.col=2))
+  print(g13, vp=grid::viewport(layout.pos.row=2, layout.pos.col=3))
+  print(g14, vp=grid::viewport(layout.pos.row=2, layout.pos.col=4))
+  print(g21, vp=grid::viewport(layout.pos.row=3, layout.pos.col=1))
+  print(g22, vp=grid::viewport(layout.pos.row=3, layout.pos.col=2))
+  print(g23, vp=grid::viewport(layout.pos.row=3, layout.pos.col=3))
+  print(g24, vp=grid::viewport(layout.pos.row=3, layout.pos.col=4))
+  # grid::grid.legend(legend_wave, vp=grid::viewport(layout.pos.col=1:2, layout.pos.row=4) )
+  # grid::grid.legend(legend_age, vp=grid::viewport(layout.pos.col=3:4, layout.pos.row=4) )
+
+  grid::popViewport(0)
+
+}
+# Usage:
+# observed_predicted(ls_model)
 
 
 
