@@ -9,21 +9,29 @@ dslong <- readRDS("/Users/cassandrabrown/Github/ialsa-bivariate-growth/data/unsh
 
 dswide <- readRDS("/Users/cassandrabrown/Github/ialsa-bivariate-growth/data/unshared/derived/map-1/data-wide.rds")
 
-dswide$sex <- factor(dswide$male, levels=c(TRUE, FALSE), labels=c("male","Female"))
-dslong$sex <- factor(dslong$male, levels=c(TRUE, FALSE), labels=c("male","Female"))
-dswidemen <- dswide[dswide$sex=="male",]
+dswide$sex <- factor(dswide$male, levels=c(TRUE, FALSE), labels=c("male","female"))
+dslong$sex <- factor(dslong$male, levels=c(TRUE, FALSE), labels=c("male","female"))
+dswidemen <- dswide[dswide$male==TRUE,]
+dswidemen <- dswidemen[dswidemen$dementia_ever!= TRUE,]
 dslongmen <- dslong[dslong$sex=="male",]
-dswidewomen <- data[data$sex=="Female",]
 
-summarize(men)
+dswidewomen <- dswide[dswide$sex=="female",]
+
+dslongwomen <- dslong[dslong$sex=="female",]
+
+
 table(men$htm_c)
-sum(!is.na(men$htm_c))
+sum(!is.na(dswidemen$htm_c))
 sum(!is.na(dswidemen$age_c70))
-sum(!is.na(men$edu_c7))
-sum(!is.na(men$smoke))
-sum(!is.na(men$stroke))
-sum(!is.na(men$diabetes))
-sum(!is.na(dswidemen$dementia_ever))
+sum(!is.na(dswidemen$edu_c7))
+sum(!is.na(dswidemen$smoke))
+sum(!is.na(dswidemen$heart))
+sum(!is.na(dswidemen$diabetes))
+sum(is.na(dswidemen$dementia_ever))
+
+table(dswidemen$dementia_ever)
+
+
 temporal_pattern <- function(ds, measure){
   # set.seed(seed_value)
   ds_long <- ds
@@ -34,7 +42,7 @@ temporal_pattern <- function(ds, measure){
   print(d)
 }
 
-temporal_pattern(dslong,dslong$fev)
+temporal_pattern(dslongmen,dslongmen$fev)
 
 # examine the descriptives over waves
 over_waves <- function(ds, measure_name, exclude_values="") {
@@ -61,14 +69,42 @@ over_waves <- function(ds, measure_name, exclude_values="") {
   return(as.data.frame(t))
   
 }
-
+dswidemen$f
 over_waves(dslongmen,"fev")
 over_waves(dslongmen, "bnt", exclude_values = (is.na("bnt")==TRUE))
 over_waves(dslongmen, "bostordel", exclude_values = (is.na("bostordel")==TRUE))
 over_waves(dslong)
 which
-men$nofev<-ifelse(fev.00==-9999 & fev.01==-9999 & fev.02==-9999 & fev.03==-9999 & fev.04==-9999 &
-                        fev.05==-9999 & fev.06==-9999 & fev.07==-9999 & fev.08==-9999 & fev.09==-9999 &
-                        fev.10==-9999 & fev.11==-9999 & fev.12==-9999 & fev.13==-9999 & fev.14==-9999 &
-                        fev.15==-9999 & fev.16==-9999 & fev.17==-9999, c("missing"), c("somedata"))
-table(radcMAP$nofev)
+dswidemen$nofev<-ifelse(is.na(dswidemen$fev_00)==TRUE & is.na(dswidemen$fev_01)==TRUE  & is.na(dswidemen$fev_02)==TRUE  & is.na(dswidemen$fev_03)==TRUE  & is.na(dswidemen$fev_04)==TRUE, c("missing"), c("somedata"))
+table(dswidemen$nofev)
+
+dswidemen$nobnt<-ifelse(is.na(dswidemen$bnt_00)==TRUE & is.na(dswidemen$bnt_01)==TRUE  & is.na(dswidemen$bnt_02)==TRUE  & is.na(dswidemen$bnt_03)==TRUE  & is.na(dswidemen$bnt_04)==TRUE, c("missing"), c("somedata"))
+table(dswidemen$nobnt)
+#no covariates
+dswidemen$nocov<-ifelse(#is.na(dswidemen$edu_c7)==TRUE & is.na(dswidemen$age_c70)==TRUE  & 
+  is.na(dswidemen$htm_c)==TRUE & is.na(dswidemen$heart)==TRUE  & is.na(dswidemen$smoke)==TRUE & is.na(dswidemen$diabetes)==TRUE, c("missing"), c("somedata"))
+table(dswidemen$nocov)
+
+dswidemen$nohtmheart <- ifelse(is.na(dswidemen$htm_c)==TRUE & is.na(dswidemen$heart)==TRUE, c("missing"), c("somedata"))
+
+table(dswidemen$nohtmheart)
+
+dswidemen$nohtmsmoke <- ifelse(is.na(dswidemen$htm_c)==TRUE & is.na(dswidemen$smoke)==TRUE, c("missing"), c("somedata"))
+table(dswidemen$nohtmsmoke)
+
+dswidemen$nohtmdiabetes <- ifelse(is.na(dswidemen$htm_c)==TRUE & is.na(dswidemen$diabetes)==TRUE, c("missing"), c("somedata"))
+table(dswidemen$nohtmdiabetes)
+
+dswidemen$noheartsmoke <- ifelse(is.na(dswidemen$heart)==TRUE  & is.na(dswidemen$smoke)==TRUE, c("missing"), c("somedata"))
+table(dswidemen$noheartsmoke)
+
+dswidemen$noheartdiabetes <- ifelse(is.na(dswidemen$heart)==TRUE  & is.na(dswidemen$diabetes)==TRUE, c("missing"), c("somedata"))
+table(dswidemen$noheartdiabetes)
+
+#identify rows with missing covariates
+which(is.na(dswidemen$diabetes))
+which(is.na(radcMAPc$heart_cum.00))
+which(is.na(radcMAPc$educ))
+which(is.na(radcMAPc$age_bl))
+which(is.na(radcMAPc$htm.00))
+which(is.na(radcMAPc$smoking))
