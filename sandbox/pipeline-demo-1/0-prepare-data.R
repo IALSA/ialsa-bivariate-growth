@@ -109,8 +109,8 @@ varnames_context <- c(
 )
 varnames_physical <- c(
   "fev",             # forced expiratory volume
-  "gait",      # Gait Speed - MAP
-  "grip"          # Extremity strength
+  "gait",            # Gait Speed - MAP
+  "grip"             # Extremity strength
 )
 varnames_cognitive <- c(
   "bnt"              # Boston naming
@@ -175,10 +175,10 @@ ds <- ds %>%
 ds <- ds %>%
   dplyr::group_by(id) %>%
   dplyr::mutate(
-    dementia_ever = any(dementia==1),
-    smoke_ever    = any(smoking %in% c(1,2)),
-    heart_ever   = any(heart_cum==1),
-    diab_ever     = any(dm_cum == 1)
+    dementia_ever = any(dementia==1, na.rm = TRUE),
+    smoke_ever    = any(smoking %in% c(1,2), na.rm = TRUE),
+    heart_ever   = any(heart_cum==1, na.rm = TRUE),
+    diab_ever     = any(dm_cum == 1, na.rm = TRUE)
     ) %>%
   dplyr::ungroup() #%>%
 

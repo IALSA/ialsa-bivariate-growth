@@ -1,10 +1,10 @@
-------Begin Mplus Model Run: 30Nov2016 12:51:42------
+------Begin Mplus Model Run: 30Nov2016 22:29:33------
 Target directory: /Users/cassandrabrown/Github/ialsa-bivariate-growth/sandbox/pipeline-demo-1/outputs//fev-bnt
 Run options:
 	Recursive (run models in subdirectories): FALSE
 	Show output on console: FALSE
 	Replace existing outfile: always
 ------
-Currently running model: b1_male_aehplus_fev_bnt.inp
+Currently running model: b1_female_aehplus_fev_bnt.inp
 
-------End Mplus Model Run: 30Nov2016 12:52:00------
+------End Mplus Model Run: 30Nov2016 22:29:39------

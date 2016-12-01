@@ -67,15 +67,15 @@ ls_model_number <- list(
 )
 ls_subgroup = list(
   "male" = "male",
-  "female" = "female",
-  "unisex" = "unisex"
+  "female" = "female"
+  #"unisex" = "unisex"
 )
 ls_model_type <- list( 
    "a"   = c("age_c70")
   ,"ah"  = c("age_c70","edu_c7")
   ,"aeh" = c("age_c70","edu_c7","htm_c")
-  ,"aehplus" = c("age_c70","edu_c7","htm_c", "smoke","stroke","diabetes")
-  ,"aeplus" = c("age_c70","edu_c7", "smoke","stroke","diabetes")
+  ,"aehplus" = c("age_c70","edu_c7","htm_c", "smoke","heart","diabetes")
+  ,"aeplus" = c("age_c70","edu_c7", "smoke","heart","diabetes")
 ) 
 
 
@@ -94,12 +94,12 @@ folder_output      = "./sandbox/pipeline-demo-1/outputs/"
 
 mplus_generator_bivariate(
    model_number       = "b1"
-  ,subgroup           = "unisex"
+  ,subgroup           = "female"
   ,model_type         = "aehplus"
   ,process_a_name     = 'fev'# item name of process (A), goes into file name
   ,process_a_mplus    = 'fev'# identifies the variable in Mplus
-  ,process_b_name     = 'numbercomparison'# item name of process (B), goes into file name
-  ,process_b_mplus    = 'numbercomparison'# identifies the variable in Mplus
+  ,process_b_name     = 'bostordel'# item name of process (B), goes into file name
+  ,process_b_mplus    = 'bostordel'# identifies the variable in Mplus
   ,covariate_set      = ls_model_type[["aehplus"]]
   ,wave_set_modeled   = wave_set_modeled 
   ,subset_condition_1 = subset_condition_1 # subset data to member of this group
