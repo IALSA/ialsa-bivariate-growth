@@ -145,14 +145,27 @@ ds <- as.data.frame(ds0[ , selected_items])
 
 # ----- remove-cases ----------------------------------
 # remove cases which do not have recorded date at baseline
-ids_without_date_at_bl <- ds %>%
-  dplyr::filter(is.na(date_at_bl)) %>%
+# ds %>% dplyr::distinct(id) %>% dplyr::count()
+# ids_without_date_at_bl <- ds %>%
+#   dplyr::filter(is.na(date_at_bl)) %>%
+#   dplyr::distinct(id) %>%
+#   as.data.frame()
+# ids_without_date_at_bl <- ids_without_date_at_bl[,"id"]
+# ds <- ds %>%
+#   dplyr::filter(!id %in% ids_without_date_at_bl)
+# ds %>% dplyr::distinct(id) %>% dplyr::count()
+
+# remove cases which do not have recorded age at baseline
+ds %>% dplyr::distinct(id) %>% dplyr::count()
+ids_without_age_at_bl <- ds %>%
+  dplyr::filter(is.na(age_at_bl)) %>%
   dplyr::distinct(id) %>%
   as.data.frame()
-ids_without_date_at_bl <- ids_without_date_at_bl[,"id"]
+ids_without_age_at_bl <- ids_without_age_at_bl[,"id"]
 ds <- ds %>%
-  dplyr::filter(!id %in% ids_without_date_at_bl)
+  dplyr::filter(!id %in% ids_without_age_at_bl)
 ds %>% dplyr::distinct(id) %>% dplyr::count()
+
 
 # remove observations with missing values on the time variable
 table(ds$fu_year, useNA = "always")
@@ -165,10 +178,11 @@ ds <- ds %>%
   dplyr::mutate(
     wave = fu_year,
     male = as.logical(ifelse(!is.na(msex),msex==1, NA_integer_)),
-    years_since_bl = as.double((date_at_visit - date_at_bl)/365)
+    # years_since_bl = as.double((date_at_visit - date_at_bl)/365)
+    years_since_bl = as.double((age_at_visit - age_at_bl))
   )
 
-
+table(ds$years_since_bl, useNA="always")
 
 # ---- compute-history-measures ---------------------
 # view_temporal_pattern(ds,"dementia",seed_value = 42)
