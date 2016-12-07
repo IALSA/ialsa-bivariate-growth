@@ -31,6 +31,8 @@ sum(is.na(dswidemen$dementia_ever))
 
 table(dswidemen$dementia_ever)
 
+sum(!is.na(dswidemen$bnt_00))
+sum(!is.na(dswidemen$bnt_01))
 
 temporal_pattern <- function(ds, measure){
   # set.seed(seed_value)
@@ -100,6 +102,7 @@ table(dswidemen$noheartsmoke)
 
 dswidemen$noheartdiabetes <- ifelse(is.na(dswidemen$heart)==TRUE  & is.na(dswidemen$diabetes)==TRUE, c("missing"), c("somedata"))
 table(dswidemen$noheartdiabetes)
+
 
 #identify rows with missing covariates
 which(is.na(dswidemen$diabetes))

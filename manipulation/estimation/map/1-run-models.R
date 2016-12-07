@@ -96,8 +96,8 @@ ls_model_type <- list(
    "a"   = c("age_c70")
   ,"ae"  = c("age_c70","edu_c7")
   ,"aeh" = c("age_c70","edu_c7","htm_c")
-  ,"aehplus" = c("age_c70","edu_c7","htm_c", "smoke","stroke","diabetes")
-  ,"aeplus" = c("age_c70","edu_c7", "smoke","stroke","diabetes")
+  ,"aehplus" = c("age_c70","edu_c7","htm_c", "smoke","heart","diabetes")
+  ,"aeplus" = c("age_c70","edu_c7", "smoke","heart","diabetes")
 )
 
 
@@ -105,7 +105,7 @@ ls_model_type <- list(
 ## @knitr dummy_1
 # Use the first example as the template for further pairs
 
-wave_set_modeled <-  c(1,2,3,4,5)
+wave_set_modeled <-  c(0,1,2,3,4)
 subset_condition_1 <- "dementia_ever NE 1"
 folder_data        = "./data/unshared/derived/map-1"
 path_prototype     = "./manipulation/estimation/prototype-wide.inp"
