@@ -295,6 +295,11 @@ ds <- ds %>%
 
 # ds %>% dplyr::glimpse()
 length(unique(ds$id))
+
+#Several cases were identified of grip values being 0 which is highly unlikely. These are replaced with NA
+#which(ds$grip==0)
+ds$grip[ds$grip==0]<- NA
+
 # Checking to see if there is missing across all waves for each of the physical variables.
 ds <- ds %>%
   dplyr::group_by(id) %>%
@@ -316,9 +321,10 @@ ds <- dplyr::filter(ds, no_fev==FALSE, no_grip==FALSE, no_gait==FALSE)
 #length(unique(ds$id))
 
 # Identify and remove cases with missing covariates to keep the N consistent across models
+ds <- dplyr::filter(ds, is.na(edu_c7)==FALSE, is.na(htm_c)==FALSE, is.na(smoke)==FALSE, is.na(heart)==FALSE, is.na(diabetes)==FALSE)
 
 
-
+length(unique(ds$id))
 # ---- prepare-for-mplus ---------------------
 varnames_transformed <- c(
   "id","wave","years_since_bl", "male",
