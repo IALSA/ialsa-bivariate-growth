@@ -294,8 +294,8 @@ ds <- ds %>%
   )
 
 # ds %>% dplyr::glimpse()
-
-# Checking to see if there is missing across all waves for all physical variables.
+length(unique(ds$id))
+# Checking to see if there is missing across all waves for each of the physical variables.
 ds <- ds %>%
   dplyr::group_by(id) %>%
   dplyr::mutate(
@@ -305,8 +305,18 @@ ds <- ds %>%
   ) %>%
   dplyr::ungroup() #%>% 
 
+#check for consistency
+#ds %>% view_temporal_pattern("no_fev", seed_value = 23)
+
+
+#filter so that only those with no fev data are dropped.
+ds <- dplyr::filter(ds, no_fev==FALSE, no_grip==FALSE, no_gait==FALSE)
+
+#Check
+#length(unique(ds$id))
 
 # Identify and remove cases with missing covariates to keep the N consistent across models
+
 
 
 # ---- prepare-for-mplus ---------------------
