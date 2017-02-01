@@ -103,7 +103,7 @@ ls_model_type <- list(
 wave_set_modeled <-  c(1,2,3,4,5)
 subset_condition_1 <- "dementia_ever NE 1"
 folder_data        = "./data/unshared/derived/octo-1"
-path_prototype     = "./manipulation/estimation/octo/prototype-wide-octo.inp"
+path_prototype     = "./manipulation/estimation/prototype-wide-octo.inp"
 folder_output      = "./output/studies/octo/phys-cog"
 # folder_data        = "./data/unshared/derived/map"
 # folder_output      = "./output/studies/map/phys-cog/pulmonary"
@@ -124,10 +124,10 @@ folder_output      = "./output/studies/octo/phys-cog"
 # )
 
 # loop over conditions
-# for(phys_measure in "fev"){
-for(phys_measure in varnames_physical){
-  # for(cog_measure in "psif"){
-  for(cog_measure in varnames_cognitive){
+for(phys_measure in "pef"){
+# for(phys_measure in varnames_physical){
+  for(cog_measure in "block"){
+  # for(cog_measure in varnames_cognitive){
     for(subgroup in names(ls_subgroup)){
       for(model_type in names(ls_model_type)){
         mplus_generator_bivariate(
@@ -152,8 +152,8 @@ for(phys_measure in varnames_physical){
 
 # ---- examine-created-output ----------------
 source("./scripts/mplus/mplus.R") # downloaded from http://www.statmodel.com/mplus-R/mplus.R
-path_gh5 <- "./sandbox/syntax-creator/outputs/grip-mmse/male_5.gh5"
-
+path_gh5 <- "./output/studies/octo/phys-cog/pef-block/b1_male_aehplus_pef_block.gh5"
+testit::assert("File does not exit", file.exists(path_gh5))
 # view options: https://www.statmodel.com/mplus-R/GH5_R.shtml
 
 mplus.list.variables(path_gh5) # variables in the gh5 file

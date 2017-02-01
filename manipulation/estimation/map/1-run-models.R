@@ -30,9 +30,10 @@ path_generic_data  <- "./data/unshared/derived/map-1/wide-dataset.dat"
 path_generic_names <- "./data/unshared/derived/map-1/wide-variable-names.txt"
 
 varnames_physical <- c(
-  "fev100",             # forced expiratory volume
-  "gait",      # Gait Speed - MAP
-  "grip"          # Extremity strength
+  # "fev100",          # forced expiratory volume
+  "fev",             # forced expiratory volume
+  "gait",            # Gait Speed - MAP
+  "grip"             # Extremity strength
 )
 varnames_cognitive <- c(
   "bnt"              # Boston naming
@@ -106,10 +107,10 @@ ls_model_type <- list(
 # Use the first example as the template for further pairs
 
 wave_set_modeled <-  c(0,1,2,3,4)
-subset_condition_1 <- "dementia_ever NE 1"
-folder_data        = "./data/unshared/derived/map-1"
-path_prototype     = "./manipulation/estimation/prototype-wide.inp"
-folder_output      = "./output/studies/map/phys-cog/"
+subset_condition_1 <- "dementia_ever NE 1" # additional subgroup constraints
+folder_data        = "./data/unshared/derived/map-1" # where data resides
+path_prototype     = "./manipulation/estimation/prototype-wide.inp" # Mplus stencil
+folder_output      = "./output/studies/map/phys-cog/" # where the output will go
 # folder_data        = "./data/unshared/derived/map"
 # folder_output      = "./output/studies/map/phys-cog/pulmonary"
 
@@ -130,9 +131,9 @@ folder_output      = "./output/studies/map/phys-cog/"
 
 # loop over conditions
 for(phys_measure in "fev"){
-  # for(phys_measure in varnames_physical){
-  # for(cog_measure in "wordlistim"){
-  for(cog_measure in varnames_cognitive){
+# for(phys_measure in varnames_physical){
+  for(cog_measure in "wordlistim"){
+  # for(cog_measure in varnames_cognitive){
     for(subgroup in names(ls_subgroup)){
       for(model_type in names(ls_model_type)){
         mplus_generator_bivariate(
@@ -157,7 +158,7 @@ for(phys_measure in "fev"){
 
 # ---- examine-created-output ----------------
 source("./scripts/mplus/mplus.R") # downloaded from http://www.statmodel.com/mplus-R/mplus.R
-path_gh5 <- "./sandbox/syntax-creator/outputs/grip-mmse/male_5.gh5"
+path_gh5 <- "./output/studies/map/phys-cog/fev-wordlistim/b1_male_aehplus_fev_wordlistim.gh5"
 
 # view options: https://www.statmodel.com/mplus-R/GH5_R.shtml
 

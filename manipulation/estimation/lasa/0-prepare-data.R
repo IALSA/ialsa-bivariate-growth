@@ -27,7 +27,7 @@ requireNamespace("reshape2") # data transformations
 path_input  <- "../LASA/data-unshared/derived/dto_portland.rds"
 
 # generic_path <- "./sandbox/pipeline-demo-1/generic-data/"
-generic_path <- "./data/unshared/derived/lasa-1"
+generic_path <- "./data/unshared/derived/lasa-1/"
 
 
 # put test assert here to check the connections
