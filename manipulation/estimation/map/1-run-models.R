@@ -30,7 +30,7 @@ path_generic_data  <- "./data/unshared/derived/map-1/wide-dataset.dat"
 path_generic_names <- "./data/unshared/derived/map-1/wide-variable-names.txt"
 
 varnames_physical <- c(
-  "fev",             # forced expiratory volume
+  "fev100",             # forced expiratory volume
   "gait",      # Gait Speed - MAP
   "grip"          # Extremity strength
 )
@@ -93,11 +93,11 @@ ls_subgroup = list(
   # ,"unisex" = "unisex"
 )
 ls_model_type <- list(
-   "a"   = c("age_c70")
-  ,"ae"  = c("age_c70","edu_c7")
-  ,"aeh" = c("age_c70","edu_c7","htm_c")
-  ,"aehplus" = c("age_c70","edu_c7","htm_c", "smoke","heart","diabetes")
-  ,"aeplus" = c("age_c70","edu_c7", "smoke","heart","diabetes")
+  "a"       = c("age_c70")
+  ,"ae"      = c("age_c70","edu_c7")
+  ,"aeh"     = c("age_c70","edu_c7","htm_c")
+  ,"aehplus" = c("age_c70","edu_c7","htm_c", "smoke","cardio","diabetes")
+  # ,"aeplus" = c("age_c70","edu_c7", "smoke","stroke","diabetes")
 )
 
 
@@ -130,11 +130,11 @@ folder_output      = "./output/studies/map/phys-cog/"
 
 # loop over conditions
 for(phys_measure in "fev"){
-# for(phys_measure in varnames_physical){
-  for(subgroup in names(ls_subgroup)){
-    for(model_type in names(ls_model_type)){
-      for(cog_measure in "bnt"){
-      # for(cog_measure in varnames_cognitive){
+  # for(phys_measure in varnames_physical){
+  # for(cog_measure in "wordlistim"){
+  for(cog_measure in varnames_cognitive){
+    for(subgroup in names(ls_subgroup)){
+      for(model_type in names(ls_model_type)){
         mplus_generator_bivariate(
           model_number        = "b1"
           ,subgroup           = subgroup

@@ -58,7 +58,7 @@ over_waves <- function(ds, measure_name, exclude_values="") {
   print(t)
   cat("\n")
   ds[,measure_name] <- as.numeric(ds[,measure_name])
-
+  
   d <- ds[!(ds[,measure_name] %in% exclude_values), ]
   a <- lazyeval::interp(~ round(mean(var),2) , var = as.name(measure_name))
   b <- lazyeval::interp(~ round(sd(var),3),   var = as.name(measure_name))
@@ -71,7 +71,7 @@ over_waves <- function(ds, measure_name, exclude_values="") {
     dplyr::group_by_("wave") %>%
     dplyr::summarize_(.dots = setNames(dots, c("mean","sd","count")))
   return(as.data.frame(t))
-
+  
 }
 
 
@@ -103,7 +103,8 @@ varnames_context <- c(
   "educ",            # Years of education
   "htm",             # Height in meters
   "smoking",         # 0 - never, 1 - former, 2 - current
-  "heart_cum",       # Medical Conditions - heart - cumulative
+  "stroke_cum",      # Clinical Diagnoses - Stroke - cumulative
+  "heart_cum",       # Heart disease, cumulative
   "dm_cum",          # Medical history - diabetes - cumulative
   "dementia"         # Dementia diagnosis
 )
@@ -136,7 +137,7 @@ varnames_cognitive <- c(
 # d <- as.data.frame(ds[ , varnames_cognitive])
 # select variables you will need for modeling, be conservative
 selected_items <- c(
-   varnames_design
+  varnames_design
   ,varnames_context
   ,varnames_physical
   ,varnames_cognitive
@@ -190,11 +191,12 @@ table(ds$years_since_bl, useNA="always")
 ds <- ds %>%
   dplyr::group_by(id) %>%
   dplyr::mutate(
-    dementia_ever = any(dementia==1, na.rm = T),
-    smoke_ever    = any(smoking %in% c(1,2), na.rm = T),
-    heart_ever   = any(heart_cum==1, na.rm = T),
-    diab_ever     = any(dm_cum == 1, na.rm = T)
-    ) %>%
+    dementia_ever = any(dementia==1),
+    smoke_ever    = any(smoking %in% c(1,2)),
+    # stroke_ever   = any(stroke_cum==1),
+    heart_ever    = any(heart_cum ==1),
+    diab_ever     = any(dm_cum == 1)
+  ) %>%
   dplyr::ungroup() #%>%
 
 
@@ -262,7 +264,7 @@ ds %>%
 
 # ---- force-to-static-cardio ---------------------------
 ds %>% temporal_pattern("heart_ever")
-# ds %>% over_waves("heart_cum")
+# ds %>% over_waves("heart_cum ")
 ds %>% over_waves("heart_ever")
 # check that values are the same across waves
 ds %>%
@@ -283,62 +285,35 @@ ds %>%
 # ---- center-covariates ---------------------------------
 ds <- ds %>%
   dplyr::mutate(
+    fev100  = fev*100, # rescale for estimation purpose
     age_c70 = age_at_bl - 70,
     edu_c7  = educ - 7,
     htm_c   = ifelse(     male==0, htm_med - 1.6,
-                   ifelse(male==1, htm_med - 1.72,NA)),
+                          ifelse(male==1, htm_med - 1.72,NA)),
     #rename to keep names 8 characters of less
     smoke    = smoke_ever,
-    heart   = heart_ever,
+    # stroke   = stroke_ever,
+    cardio   = heart_ever,
     diabetes = diab_ever
   )
 
 # ds %>% dplyr::glimpse()
-length(unique(ds$id))
-
-#Several cases were identified of grip values being 0 which is highly unlikely. These are replaced with NA
-#which(ds$grip==0)
-ds$grip[ds$grip==0]<- NA
-
-# Checking to see if there is missing across all waves for each of the physical variables.
-ds <- ds %>%
-  dplyr::group_by(id) %>%
-  dplyr::mutate(
-    no_fev = all(is.na(fev)==TRUE),
-    no_grip = all(is.na(grip)==TRUE),
-    no_gait = all(is.na(gait)==TRUE)
-  ) %>%
-  dplyr::ungroup() #%>% 
-
-#check for consistency
-#ds %>% view_temporal_pattern("no_fev", seed_value = 23)
 
 
-#filter so that only those with no fev data are dropped.
-ds <- dplyr::filter(ds, no_fev==FALSE, no_grip==FALSE, no_gait==FALSE)
-
-#Check
-#length(unique(ds$id))
-
-# Identify and remove cases with missing covariates to keep the N consistent across models
-ds <- dplyr::filter(ds, is.na(edu_c7)==FALSE, is.na(htm_c)==FALSE, is.na(smoke)==FALSE, is.na(heart)==FALSE, is.na(diabetes)==FALSE)
-
-
-length(unique(ds$id))
 # ---- prepare-for-mplus ---------------------
 varnames_transformed <- c(
   "id","wave","years_since_bl", "male",
-  "age_c70","edu_c7", "htm_c", "smoke","heart", "diabetes","dementia_ever"
+  "age_c70","edu_c7", "htm_c", "smoke","cardio", "diabetes","dementia_ever"
 )
 ds_long <- ds %>%
-  dplyr::select_(.dots = c(varnames_transformed, varnames_physical, varnames_cognitive))
+  dplyr::select_(.dots = c(varnames_transformed,"fev100", varnames_physical, varnames_cognitive))
 
 
 # define variable properties for long-to-wide conversion
 variables_static <- c(
   "id", "male",
-  "age_c70","edu_c7", "htm_c", "smoke","heart", "diabetes", "dementia_ever"
-  )
+  "age_c70","edu_c7", "htm_c", "smoke","cardio", "diabetes", "dementia_ever"
+)
 variables_longitudinal <- setdiff(colnames(ds_long),variables_static)  # not static
 (variables_longitudinal <- variables_longitudinal[!variables_longitudinal=="wave"]) # all except wave
 # establish a wide format
