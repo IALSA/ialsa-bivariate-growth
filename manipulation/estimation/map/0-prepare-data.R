@@ -191,6 +191,7 @@ table(ds$years_since_bl, useNA="always")
 ds <- ds %>%
   dplyr::group_by(id) %>%
   dplyr::mutate(
+    dementia_baseline = ifelse(((wave==0) && (dementia==1))==TRUE, TRUE, 0),
     dementia_ever = any(dementia==1),
     smoke_ever    = any(smoking %in% c(1,2)),
     # stroke_ever   = any(stroke_cum==1),
@@ -198,7 +199,6 @@ ds <- ds %>%
     diab_ever     = any(dm_cum == 1)
   ) %>%
   dplyr::ungroup() #%>%
-
 
 # ---- force-to-static-sex ---------------------------
 ds %>% view_temporal_pattern("male", 42) # sex

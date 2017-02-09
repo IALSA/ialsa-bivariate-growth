@@ -19,8 +19,8 @@ requireNamespace("reshape2") # data transformations
 requireNamespace("sas7bdat") # for inputing SAS files
 
 # ---- declare-globals ---------------------------------------------------------
-# path_input  <- "./data/unshared/raw/map/ds0.rds"
-path_input  <- "../OCTO-Twin/data/unshared/raw/octomult_151015.sas7bdat"
+path_input  <- "./data/unshared/raw/octomult_151015.sas7bdat"
+#path_input  <- "../OCTO-Twin/data/unshared/raw/octomult_151015.sas7bdat"
 
 # put test assert here to check the connection.
 # generic_path <- "./sandbox/pipeline-demo-1/generic-data/"
