@@ -107,10 +107,10 @@ ls_model_type <- list(
 # Use the first example as the template for further pairs
 
 wave_set_modeled <-  c(0,1,2,3,4)
-subset_condition_1 <- "id NE 0" # additional subgroup constraints
+subset_condition_1 <- "dementia_baseline NE 1" # additional subgroup constraints
 folder_data        = "./data/unshared/derived/map-1" # where data resides
 path_prototype     = "./manipulation/estimation/prototype-wide.inp" # Mplus stencil
-folder_output      = "./output/studies/map/phys-cog-include-dementia/" # where the output will go
+folder_output      = "./output/studies/map/phys-cog-baseline-dementia/" # where the output will go
 # folder_data        = "./data/unshared/derived/map"
 # folder_output      = "./output/studies/map/phys-cog/pulmonary"
 
@@ -130,10 +130,10 @@ folder_output      = "./output/studies/map/phys-cog-include-dementia/" # where t
 # )
 
 # loop over conditions
-for(phys_measure in "fev"){
-# for(phys_measure in varnames_physical){
-  for(cog_measure in "wordlistim"){
-  # for(cog_measure in varnames_cognitive){
+#for(phys_measure in "fev"){
+for(phys_measure in varnames_physical){
+  #for(cog_measure in "wordlistim"){
+  for(cog_measure in varnames_cognitive){
     for(subgroup in names(ls_subgroup)){
       for(model_type in names(ls_model_type)){
         mplus_generator_bivariate(
