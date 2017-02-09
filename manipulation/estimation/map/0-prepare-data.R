@@ -191,14 +191,14 @@ table(ds$years_since_bl, useNA="always")
 ds <- ds %>%
   dplyr::group_by(id) %>%
   dplyr::mutate(
-    dementia_baseline = ifelse(((wave==0) && (dementia==1))==TRUE, TRUE, 0),
+    dementia_baseline = ifelse(((wave==0) && (dementia==1))==TRUE, 1, 0),
     dementia_ever = any(dementia==1),
     smoke_ever    = any(smoking %in% c(1,2)),
     # stroke_ever   = any(stroke_cum==1),
     heart_ever    = any(heart_cum ==1),
     diab_ever     = any(dm_cum == 1)
   ) %>%
-  dplyr::ungroup() #%>%
+  dplyr::ungroup() 
 
 # ---- force-to-static-sex ---------------------------
 ds %>% view_temporal_pattern("male", 42) # sex
@@ -303,7 +303,7 @@ ds <- ds %>%
 # ---- prepare-for-mplus ---------------------
 varnames_transformed <- c(
   "id","wave","years_since_bl", "male",
-  "age_c70","edu_c7", "htm_c", "smoke","cardio", "diabetes","dementia_ever"
+  "age_c70","edu_c7", "htm_c", "smoke","cardio", "diabetes","dementia_ever","dementia_baseline"
 )
 ds_long <- ds %>%
   dplyr::select_(.dots = c(varnames_transformed,"fev100", varnames_physical, varnames_cognitive))
@@ -312,7 +312,7 @@ ds_long <- ds %>%
 # define variable properties for long-to-wide conversion
 variables_static <- c(
   "id", "male",
-  "age_c70","edu_c7", "htm_c", "smoke","cardio", "diabetes", "dementia_ever"
+  "age_c70","edu_c7", "htm_c", "smoke","cardio", "diabetes", "dementia_ever","dementia_baseline"
 )
 variables_longitudinal <- setdiff(colnames(ds_long),variables_static)  # not static
 (variables_longitudinal <- variables_longitudinal[!variables_longitudinal=="wave"]) # all except wave
