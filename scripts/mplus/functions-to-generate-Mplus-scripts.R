@@ -171,7 +171,8 @@ mplus_generator_bivariate <- function(
     saved_location_mplus <- paste0(pathRoot,"/",sub_directory)
     saved_location_mplus <- gsub("/./","/",saved_location_mplus)
     MplusAutomation::runModels(
-      directory=saved_location_mplus,
+      # directory=saved_location_mplus,
+      target=saved_location_mplus,
       filefilter = paste0(model_id,".inp")
     )#, Mplus_command = Mplus_install_path)
   }
