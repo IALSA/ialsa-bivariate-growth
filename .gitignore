@@ -62,3 +62,4 @@ manipulation/translator-support/outputs/grip-numbercomp/long-dataset.dat
 *.gh5
 sandbox/pipeline-demo-1/outputs/generic-data/data-long.rds
 sandbox/pipeline-demo-1/outputs/generic-data/data-wide.rds
+.DS_Store
