@@ -18,12 +18,12 @@ requireNamespace("testit")
 requireNamespace("reshape2") # data transformations
 
 # ---- declare-globals ---------------------------------------------------------
-# path_input  <- "./data/unshared/raw/map/ds0.rds"
-path_input  <- "../MAP/data-unshared/derived/dto.rds"
+# path_input  <- "./data/unshared/derived/map/dto-representative.rds"
+path_input  <- "./data/unshared/derived/map/dto.rds"
 
 # put test assert here to check the connection.
 # generic_path <- "./sandbox/pipeline-demo-1/generic-data/"
-generic_path <- "./data/unshared/derived/map-1/"
+generic_path <- "./data/unshared/derived/mlm-1/"
 
 
 # ---- functions-to-examime-temporal-patterns -------------------
@@ -110,8 +110,8 @@ varnames_context <- c(
 )
 varnames_physical <- c(
   "fev",             # forced expiratory volume
-  "gait",      # Gait Speed - MAP
-  "grip"          # Extremity strength
+  "gait",            # Gait Speed - MAP
+  "grip"             # Extremity strength
 )
 varnames_cognitive <- c(
   "bnt"              # Boston naming
@@ -183,7 +183,7 @@ ds <- ds %>%
     years_since_bl = as.double((age_at_visit - age_at_bl))
   )
 
-table(ds$years_since_bl, useNA="always")
+table(ds$years_since_bl, useNA="always") 
 
 # ---- compute-history-measures ---------------------
 # view_temporal_pattern(ds,"dementia",seed_value = 42)
@@ -201,7 +201,7 @@ ds <- ds %>%
   dplyr::ungroup() 
 
 # ---- force-to-static-sex ---------------------------
-ds %>% view_temporal_pattern("male", 42) # sex
+ds %>% view_temporal_pattern("male", 41) # sex
 ds %>% over_waves("male") # 1, 2, 3, 4, 5, 6
 # check that values are the same across waves
 ds %>%
@@ -245,7 +245,7 @@ ds <- ds %>%
   dplyr::group_by(id) %>%
   # compute median height across lifespan
   dplyr::mutate(
-    htm_med   = median(htm, na.rm =T) # grabs the value for the first wave and forces it to all waves
+    htm_med   = median(htm, na.rm = T) # grabs the value for the first wave and forces it to all waves
   ) %>%
   dplyr::ungroup()
 # examine the difference
