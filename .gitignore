@@ -20,7 +20,7 @@ output/*/*
 output/*/*/*
 output/*/*/*/*
 output/*/*/*/*/*
-
+output/studies
 # Dataset Exceptions
 !utility/package-dependency-list.csv
 
