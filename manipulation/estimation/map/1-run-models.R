@@ -84,7 +84,7 @@ ls_model_number <- list(
   # "univariate_flat"      = "u0",
   # "univariate_linear"    = "u1",
   # "univariate_quadratic" = "u2",
-  "bivariate_flat"       = "b0",
+  # "bivariate_flat"       = "b0",
   "bivariate_linear"     = "b1"
   # "bivariate_quadratic"  = "b2"
 )
@@ -94,10 +94,10 @@ ls_subgroup = list(
   # ,"unisex" = "unisex"
 )
 ls_model_type <- list(
-  "a"       = c("age_c70")
+  # "a"       = c("age_c70")
   # ,"ae"      = c("age_c70","edu_c7")
-  # ,"aeh"     = c("age_c70","edu_c7","htm_c")
-  ,"aehplus" = c("age_c70","edu_c7","htm_c", "smoke","cardio","diabetes")
+  "aeh"     = c("age_c70","edu_c7","htm_c")
+  # ,"aehplus" = c("age_c70","edu_c7","htm_c", "smoke","cardio","diabetes")
   # ,"aeplus" = c("age_c70","edu_c7", "smoke","stroke","diabetes")
 )
 
@@ -110,7 +110,7 @@ wave_set_modeled <-  c(0,1,2,3,4,5,6,7,8,9)
 subset_condition_1 <- "dementia_baseline NE 1" # additional subgroup constraints
 folder_data        = "./data/unshared/derived/map-1" # where data resides
 path_prototype     = "./manipulation/estimation/prototype-wide.inp" # Mplus stencil
-folder_output      = "./model-output/physical-cogntive/studies/map/" # where the output will go
+folder_output      = "./model-output/physical-cognitive/studies/map/" # where the output will go
 # folder_data        = "./data/unshared/derived/map"
 # folder_output      = "./output/studies/map/phys-cog/pulmonary"
 
