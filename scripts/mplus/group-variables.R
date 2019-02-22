@@ -1,18 +1,43 @@
 # load the objects that will subset columns from the results tables
 
-# @knitr setGlobals --------------------------------------------------------------
 
-admin <- c("software","version", "date", "time", "output_file", "data_file", "file_path")
+admin <- c(
+  "software"
+  ,"version"
+  ,"date"
+  ,"time"
+  ,"output_file"
+  ,"data_file"
+  ,"file_path"
+)
 
+model_id <- c(
+   "study_name"
+  ,"model_number"
+  ,"subgroup"
+  ,"model_type"
+  ,"process_a"
+  ,"process_b"
+)
 
-model_id <- c("study_name","model_number","subgroup","model_type",
-              "process_a", "process_b")
+model_info <- c(
+  "subject_count"
+  ,"wave_count"
+  ,"datapoint_count"
+  ,"parameter_count"
+  ,"LL"
+  ,"aic"
+  ,"bic"
+  ,"adj_bic"
+  ,"aaic"
+  )
 
-model_info <- c("subject_count", "wave_count", "datapoint_count", "parameter_count",
-  "LL", "aic", "bic", "adj_bic", "aaic" )
-
-errors <- c("has_converged","trust_all","mistrust", "covar_covered")
-
+errors <- c(
+   "has_converged"
+  ,"trust_all"
+  ,"mistrust"
+  ,"covar_covered"
+)
 
 # covariance btw intercept of process (A) and intercept of process (B)
 ab_TAU_00 <- c("ab_TAU_00_est", "ab_TAU_00_se", "ab_TAU_00_wald","ab_TAU_00_pval")
@@ -23,7 +48,7 @@ ab_TAU_01 <- c("ab_TAU_01_est", "ab_TAU_01_se", "ab_TAU_01_wald","ab_TAU_01_pval
 # covariance btw slope of process (A) and intercept of process (B)
 ab_TAU_10 <- c("ab_TAU_10_est", "ab_TAU_10_se", "ab_TAU_10_wald", "ab_TAU_10_pval")
 # covariance btw residual of process (A) and residual of process (B)
-ab_SIGMA <- c("ab_SIGMA_est", "ab_SIGMA_se", "ab_SIGMA_wald", "ab_SIGMA_pval")
+ab_SIGMA  <- c("ab_SIGMA_est", "ab_SIGMA_se", "ab_SIGMA_wald", "ab_SIGMA_pval")
 
 
 # variance of the intercept of process (A)
@@ -33,7 +58,7 @@ aa_TAU_11 <- c("aa_TAU_11_est", "aa_TAU_11_se","aa_TAU_11_wald", "aa_TAU_11_pval
 # covariance of intercept of process (A) and slope of process (A)
 aa_TAU_01 <- c("aa_TAU_01_est", "aa_TAU_01_se","aa_TAU_01_wald", "aa_TAU_01_pval")
 # variance of residual of process (A)
-a_SIGMA <- c("a_SIGMA_est", "a_SIGMA_se","a_SIGMA_wald",  "a_SIGMA_pval")
+a_SIGMA   <- c("a_SIGMA_est", "a_SIGMA_se","a_SIGMA_wald",  "a_SIGMA_pval")
 
 
 # variance of the intercept of process (B)
@@ -43,7 +68,7 @@ bb_TAU_11 <- c("bb_TAU_11_est", "bb_TAU_11_se", "bb_TAU_11_wald",  "bb_TAU_11_pv
 #  covariance btw slope of process (B) and intercept of process (B)
 bb_TAU_10 <- c("bb_TAU_10_est", "bb_TAU_10_se", "bb_TAU_10_wald", "bb_TAU_10_pval")
 # variance of residual of process (B)
-b_SIGMA <- c("b_SIGMA_est", "b_SIGMA_se", "b_SIGMA_wald",  "b_SIGMA_pval")
+b_SIGMA   <- c("b_SIGMA_est", "b_SIGMA_se", "b_SIGMA_wald",  "b_SIGMA_pval")
 
 
 # intercept of process (A) / average initial status of process (A)
@@ -117,11 +142,11 @@ b_GAMMA_06 <-  c("b_GAMMA_06_est", "b_GAMMA_06_se", "b_GAMMA_06_wald","b_GAMMA_0
 
 # estimated
 # correlation b/w intercept of process (A)  and intercept of process (B)
-R_IAIB <- c("R_IAIB_est", "R_IAIB_se","R_IAIB_wald", "R_IAIB_pval")
+R_IAIB     <- c("R_IAIB_est", "R_IAIB_se","R_IAIB_wald", "R_IAIB_pval")
 # correlation b/w slope of process (A)  and slope of process (B)
-R_SASB <- c("R_SASB_est", "R_SASB_se", "R_SASB_wald", "R_SASB_pval")
+R_SASB     <- c("R_SASB_est", "R_SASB_se", "R_SASB_wald", "R_SASB_pval")
 # correlation b/w RESIDUAL of process (A) and RESIDUAL of process (B)
-R_RES_AB <- c("R_RES_AB_est", "R_RES_AB_se","R_RES_AB_wald",  "R_RES_AB_pval")
+R_RES_AB   <- c("R_RES_AB_est", "R_RES_AB_se","R_RES_AB_wald",  "R_RES_AB_pval")
 
 
 # computed
