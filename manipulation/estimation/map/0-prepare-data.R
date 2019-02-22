@@ -19,7 +19,7 @@ requireNamespace("reshape2") # data transformations
 
 # ---- declare-globals ---------------------------------------------------------
 # path_input  <- "./data/unshared/raw/map/ds0.rds"
-path_input  <- "../MAP/data-unshared/derived/dto.rds"
+path_input  <- "../MAP/data-unshared/derived/1-dto-transformed.rds"
 
 # put test assert here to check the connection.
 # generic_path <- "./sandbox/pipeline-demo-1/generic-data/"
@@ -78,7 +78,7 @@ over_waves <- function(ds, measure_name, exclude_values="") {
 # ---- load-data ---------------------------------------------------------------
 dto <- readRDS(path_input)
 ds0 <- dto$unitData
-meta <- dto$metaData
+meta <- dto$metaData 
 
 
 # ---- inspect-data -------------------------------------------------------------
