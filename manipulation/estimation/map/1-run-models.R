@@ -31,30 +31,30 @@ path_generic_names <- "./data/unshared/derived/map-1/wide-variable-names.txt"
 
 varnames_physical <- c(
   # "fev100",          # forced expiratory volume
-  "fev",             # forced expiratory volume
-  "gait",            # Gait Speed - MAP
-  "grip"             # Extremity strength
+  "fev"             # forced expiratory volume
+  # "gait",            # Gait Speed - MAP
+  # "grip"             # Extremity strength
 )
 varnames_cognitive <- c(
   "bnt"              # Boston naming
   ,"bostordel"       # East Boston story - delayed recall
-  ,"bostorim"        # East Boston story - immediate
-  ,"catfluency"      # Category fluency
-  ,"complexideas"    # Complex ideas
-  ,"digitbackward"   # Digits backwards
-  ,"digitforward"    # Digits forwards
-  ,"digitorder"      # Digit ordering
-  ,"lineorientation" # Line orientation -
-  ,"logimemdel"      # Logical memory IIa
-  ,"logimemim"       # Logical memory Ia - immediate
-  ,"matrices"        # Progressive Matrices -
-  ,"mmse"            # Mini Mental State Examination
-  ,"nart"            # Reading test-NART
-  ,"numbercomparison"# Number comparison
-  ,"symbol"          # Symbol digit modalitities
-  ,"wordlistdel"     # Word list II - delayed
-  ,"wordlistim"      # Word list I- immediate-
-  ,"wordlistrecog"   # Word list III - recognition
+  # ,"bostorim"        # East Boston story - immediate
+  # ,"catfluency"      # Category fluency
+  # ,"complexideas"    # Complex ideas
+  # ,"digitbackward"   # Digits backwards
+  # ,"digitforward"    # Digits forwards
+  # ,"digitorder"      # Digit ordering
+  # ,"lineorientation" # Line orientation -
+  # ,"logimemdel"      # Logical memory IIa
+  # ,"logimemim"       # Logical memory Ia - immediate
+  # ,"matrices"        # Progressive Matrices -
+  # ,"mmse"            # Mini Mental State Examination
+  # ,"nart"            # Reading test-NART
+  # ,"numbercomparison"# Number comparison
+  # ,"symbol"          # Symbol digit modalitities
+  # ,"wordlistdel"     # Word list II - delayed
+  # ,"wordlistim"      # Word list I- immediate-
+  # ,"wordlistrecog"   # Word list III - recognition
 )
 
 # ---- load-data ---------------------------------------------------------------
@@ -81,12 +81,12 @@ testit::assert("File does not exist",file.exists(path_generic_names))
 ## Execute script snippets for each pair individually below this
 # ---- create-predictor-selector -----------------------------
 ls_model_number <- list(
-  "univariate_flat"      = "u0",
-  "univariate_linear"    = "u1",
-  "univariate_quadratic" = "u2",
+  # "univariate_flat"      = "u0",
+  # "univariate_linear"    = "u1",
+  # "univariate_quadratic" = "u2",
   "bivariate_flat"       = "b0",
-  "bivariate_linear"     = "b1",
-  "bivariate_quadratic"  = "b2"
+  "bivariate_linear"     = "b1"
+  # "bivariate_quadratic"  = "b2"
 )
 ls_subgroup = list(
   "male" = "male"
@@ -94,10 +94,10 @@ ls_subgroup = list(
   # ,"unisex" = "unisex"
 )
 ls_model_type <- list(
-  "a"       = c("age_c70")
-  ,"ae"      = c("age_c70","edu_c7")
-  ,"aeh"     = c("age_c70","edu_c7","htm_c")
-  ,"aehplus" = c("age_c70","edu_c7","htm_c", "smoke","cardio","diabetes")
+  # "a"       = c("age_c70")
+  # ,"ae"      = c("age_c70","edu_c7")
+  # ,"aeh"     = c("age_c70","edu_c7","htm_c")
+  "aehplus" = c("age_c70","edu_c7","htm_c", "smoke","cardio","diabetes")
   # ,"aeplus" = c("age_c70","edu_c7", "smoke","stroke","diabetes")
 )
 
@@ -106,11 +106,11 @@ ls_model_type <- list(
 ## @knitr dummy_1
 # Use the first example as the template for further pairs
 
-wave_set_modeled <-  c(0,1,2,3,4)
+wave_set_modeled <-  c(0,1,2,3,4,5,6,7,8,9)
 subset_condition_1 <- "dementia_baseline NE 1" # additional subgroup constraints
 folder_data        = "./data/unshared/derived/map-1" # where data resides
 path_prototype     = "./manipulation/estimation/prototype-wide.inp" # Mplus stencil
-folder_output      = "./output/studies/map/phys-cog-baseline-dementia/" # where the output will go
+folder_output      = "./output/studies/map/phys-cog/" # where the output will go
 # folder_data        = "./data/unshared/derived/map"
 # folder_output      = "./output/studies/map/phys-cog/pulmonary"
 
