@@ -7,7 +7,7 @@ source("./scripts/mplus/model-components.R") # organizes variable names
 # I. EXTRACTION
 #
 # sample path for testing and development
-path <- list_path_out[["map"]][2]
+# path <- list_path_out[["map"]][2]
 
 # I.A. Extrac model identification variables
 get_id <- function(
@@ -141,33 +141,33 @@ get_results_basic <- function(
   if(!mpar=="One or more variables have a variance of zero"){
     model <- mpar$unstandardized
     ## Populate admin variables
-    (result['software'] <- mplus_output[1])
-    (result["version"] <- "0.1")
+    (result['software']    <- mplus_output[1])
+    (result["version"]     <- "0.1")
     (result[ c('date', 'time')] <- strsplit(mplus_output[3], '  ')[[1]])
-    (result["data_file"] <- strsplit(mplus_output[grep("File", mplus_output, ignore.case=TRUE)], 'IS| is |=|;')[[1]][2])
+    (result["data_file"]   <- strsplit(mplus_output[grep("File", mplus_output, ignore.case=TRUE)], 'IS| is |=|;')[[1]][2])
     (result['output_file'] <- msum['Filename'])
-    (result["file_path"] <- mid["file_path"])
+    (result["file_path"]   <- mid["file_path"])
 
     ## Populate model_id variables
-    (result["study_name"] <- mid["study_name"])
+    (result["study_name"]   <- mid["study_name"])
     (result["model_number"] <- mid["model_number"])
-    (result["subgroup"] <- mid["subgroup"])
-    (result["model_type"] <- mid["model_type"])
-    (result["process_a"] <- mid["process_a"])
-    (result["process_b"] <- mid["process_b"])
+    (result["subgroup"]     <- mid["subgroup"])
+    (result["model_type"]   <- mid["model_type"])
+    (result["process_a"]    <- mid["process_a"])
+    (result["process_b"]    <- mid["process_b"])
 
 
     ## Populate model_info variables
-    (result['subject_count'] <- msum['Observations']) # verify this, maybe datapoints, not subjects
+    (result['subject_count']   <- msum['Observations']) # verify this, maybe datapoints, not subjects
     (result['parameter_count'] <- msum['Parameters'])
 
-    (subject <- model[model$paramHeader=='Intercepts', 'param'])
+    (subject              <- model[model$paramHeader=='Intercepts', 'param'])
     (result['wave_count'] <- max(as.numeric(gsub("[^0-9]", '', subject)), na.rm=T)) # MUST CHANGE. COUNTS THE HIGHEST NUMBER, BUT RATHER MUST COUNT THE COUNT OF WAVES
-    (result['LL'] <-  msum['LL'])
-    (result['aic'] <-  msum['AIC'])
-    (result['bic'] <-  msum['BIC'])
-    (result['adj_bic'] <-  msum['aBIC'])
-    (result['aaic'] <-  msum['AICC'])
+    (result['LL']         <- msum['LL'])
+    (result['aic']        <- msum['AIC'])
+    (result['bic']        <- msum['BIC'])
+    (result['adj_bic']    <- msum['aBIC'])
+    (result['aaic']       <- msum['AICC'])
     ## Computed values
   }
   }

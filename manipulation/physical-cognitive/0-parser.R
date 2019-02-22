@@ -47,7 +47,7 @@ collect_one_study <- function(
 ){
   ## Values for testing and development
   # lst          <- list_path_out
-  # study        <- "nas"
+  # study        <- "map"
   # column_names <- selected_results
   # save_folder  <- path_folder
   # paths_out    <- list_path_out[[study]]
@@ -96,17 +96,17 @@ collect_one_study <- function(
 # create a list object broken by study, containing paths to model outputs
 list_path_out <-list(
   # manual estimation (outputs provided "as is" from the study drivers)
-   "eas"   = list.files(file.path(path_folder,"eas")  ,full.names=T, recursive=T, pattern="out$")
-  ,"elsa"  = list.files(file.path(path_folder,"elsa") ,full.names=T, recursive=T, pattern="out$")
-  ,"hrs"   = list.files(file.path(path_folder,"hrs")  ,full.names=T, recursive=T, pattern="out$")
-  ,"ilse"  = list.files(file.path(path_folder,"ilse") ,full.names=T, recursive=T, pattern="out$")
-  ,"nas"   = list.files(file.path(path_folder,"nas"),  full.names=T, recursive=T, pattern="out$")
-  ,"nuage" = list.files(file.path(path_folder,"nuage"),full.names=T, recursive=T, pattern="out$")
-  ,"satsa" = list.files(file.path(path_folder,"satsa"),full.names=T, recursive=T, pattern="out$")
-  ,"lasa"  = list.files(file.path(path_folder,"lasa") ,full.names=T, recursive=T, pattern="out$") # Cambridge version
+  #  "eas"   = list.files(file.path(path_folder,"eas")  ,full.names=T, recursive=T, pattern="out$")
+  # ,"elsa"  = list.files(file.path(path_folder,"elsa") ,full.names=T, recursive=T, pattern="out$")
+  # ,"hrs"   = list.files(file.path(path_folder,"hrs")  ,full.names=T, recursive=T, pattern="out$")
+  # ,"ilse"  = list.files(file.path(path_folder,"ilse") ,full.names=T, recursive=T, pattern="out$")
+  # ,"nas"   = list.files(file.path(path_folder,"nas"),  full.names=T, recursive=T, pattern="out$")
+  # ,"nuage" = list.files(file.path(path_folder,"nuage"),full.names=T, recursive=T, pattern="out$")
+  # ,"satsa" = list.files(file.path(path_folder,"satsa"),full.names=T, recursive=T, pattern="out$")
+  # ,"lasa"  = list.files(file.path(path_folder,"lasa") ,full.names=T, recursive=T, pattern="out$") # Cambridge version
   # script estimation (outputs generated using IalsaSynthesis package, using datasets provided by IALSA Study Curator) 
-  ,"map"   = list.files(file.path(path_folder,"map")  ,full.names=T, recursive=T, pattern="out$")
-  ,"octo"  = list.files(file.path(path_folder,"octo") ,full.names=T, recursive=T, pattern="out$")
+  "map"   = list.files(file.path(path_folder,"map")  ,full.names=T, recursive=T, pattern="out$")
+  # ,"octo"  = list.files(file.path(path_folder,"octo") ,full.names=T, recursive=T, pattern="out$")
 )
 
 # ---- inspect-data ------------------------------------------------
@@ -151,7 +151,7 @@ list_path_out <-list(
 
 # script estimation (outputs generated using IalsaSynthesis package, using datasets provided by IALSA Study Curator)
 # collect_one_study(list_path_out,"lasa",  selected_results, path_folder) # not there yet
-# collect_one_study(list_path_out,"map",   selected_results, path_folder)
+collect_one_study(list_path_out,"map",   selected_results, path_folder)
 # collect_one_study(list_path_out,"octo",  selected_results, path_folder)
 
 # ---- assemble-catalog ---------------------------------------------------------
