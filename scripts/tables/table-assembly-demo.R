@@ -1,25 +1,25 @@
 rm(list = ls())
 library(magrittr)
 
-catalog <- read.csv("./data/shared/pc-2-parsed-results-computed_ci.csv", header = T,  stringsAsFactors=FALSE)
-catalog_spread <- readRDS("./data/shared/derived/pc-spread.rds") # physical-cognitive track
-# template for structuring tables for reporting individual models
-stencil <- readr::read_csv("./data/shared/tables/study-specific-stencil-v6.csv")
-# basic lookup function
-# source("./scripts/model-lookup-function.R")
-# load lookup function
+catalog_wide <- readr::read_csv("./model-output/physical-cognitive/2-catalog-wide.csv",col_names = TRUE)
+catalog_long <- readr::read_csv("./model-output/physical-cognitive/3-catalog-long.csv",col_names = TRUE)
+stencil <- readr::read_csv("./data/public/raw/stencils/study-specific-stencil-v10.csv")
+
 source("./scripts/table-assembly-functions.R")
 
+catalog        <- catalog_wide
+catalog_spread <- catalog_long
 
 
+# ---- expose-functions -------
 # this script explains and demonstrates the use of functions
 # for assembling and printing report tables
 
 # Viewing functions
 
 view_options(
-   d           = catalog_spread                       # transformed catalog
-  ,study_name  = c("nas")                            # name of study
+  d           = catalog_spread                       # transformed catalog
+  ,study_name  = c("octo")                            # name of study
   ,model_types = c("a","ae","aeh","aehplus", "full")  # types of model (covariate set)
   ,processes_a = c("fev","fev100","pef")              # names of process 1
   # ,processes_b = c("block")                          # names of process 2
@@ -28,29 +28,29 @@ view_options(
 
 view_one_model(
   d           = catalog_spread,  # transformed catalog
-  study_name_ = "nas",          # name of study
+  study_name_ = "octo",          # name of study
   subgroup_   = "male",        # gender: male or female
   model_type_ = "aehplus",       # type of model (covariate set)
-  process_a_  = "fev",           # single measure of process 1
-  process_b_  = "word_de",       # single measure of process 2
+  process_a_  = "pef",           # single measure of process 1
+  process_b_  = "block",       # single measure of process 2
   pretty_     = TRUE            # formatting option
 )
 
 print_coefficients(
   d              = catalog         # contains model solutions, row = model
-  ,study_name    = "nas"          # name of study
+  ,study_name    = "eas"          # name of study
   ,subgroup      = "male"        # gender : male or female
-  ,pivot         = "fev"           # fixed; name of process 1
+  ,pivot         = "pef"           # fixed; name of process 1
   ,target_names  = c(              # coefficients of interest
     "cr_levels_est"
-    ,"cr_slopes_est"
-    ,"cr_resid_est"
-    )
+    # ,"cr_slopes_est"
+    # ,"cr_resid_est"
+  )
   ,target_labels = c(              # labels for the coefs of interest
     "Correlation of Levels"
-    ,"Correlation of Slopes"
-    ,"Correlation of Residuals"
-    )
+    # ,"Correlation of Slopes"
+    # ,"Correlation of Residuals"
+  )
   ,print_format = "pandoc"
 )
 
@@ -59,22 +59,22 @@ print_coefficients(
 ###  Baking functions
 
 ls <- pull_one_model(
-   d           = catalog_spread # transformed catalog
-  ,study_name_ = "nas"         # name of study
-  ,subgroup_   = "male"       # gender : male or female
-  ,model_type_ = "aehplus"      # type of model (covariate set)
-  ,process_a_  = "fev"          # name of process 1
-  ,process_b_  = "mmse"        # name of process 2
+  d           = catalog_spread      # transformed catalog
+  ,study_name_ = "octo"    # name of study
+  ,subgroup_   = "female"  # gender : male or female
+  ,model_type_ = "aehplus"# type of model (covariate set)
+  ,process_a_  = "pef"    # name of process 1
+  ,process_b_ = "block"    # name of process 2
 )
 lapply(ls, names)
 
 
 baking_mix <- make_baking_mix_model_type(
   d = catalog_spread                         # transformed catalog
-  ,study_name_ = "nas"                      # name of study
+  ,study_name_ = "octo"                      # name of study
   ,subgroup_   = "male"                    # gender : male or female
   ,model_type_ = c("a","ae","aeh","aehplus") # types of model to include
-  ,process_a_  = "fev"                       # name of process 1
+  ,process_a_  = "pef"                       # name of process 1
   ,process_b_  = "mmse"                     # name of process 2
 )
 lapply(baking_mix, names)
@@ -82,10 +82,10 @@ lapply(baking_mix, names)
 
 baking_mix <- make_baking_mix_process_a(
   d = catalog_spread          # transformed catalog
-  ,study_name_ = "nas"       # name of study
+  ,study_name_ = "octo"       # name of study
   ,subgroup_   = "male"     # gender : male or female
   ,model_type_ = c("aehplus") # the common model type
-  ,process_a_  = "fev"        # the stable process in pair
+  ,process_a_  = "pef"        # the stable process in pair
 )
 lapply(baking_mix, names)
 
@@ -108,11 +108,11 @@ print(slice)
 
 ### Convenience functions
 serve_slice_model_type(
-   d            = catalog_spread
-  ,study_name   = "nas"                      # name of study
+  d            = catalog_spread
+  ,study_name   = "octo"                      # name of study
   ,subgroup     = "male"                    # gender : male or female
   ,model_type   = c("a","ae","aeh","aehplus") # compare across these models
-  ,process_a    = "fev"                       # name of process 1
+  ,process_a    = "pef"                       # name of process 1
   ,process_b    = "mmse"                     # name of process 2
   ,print_config = FALSE                       # should configuration be printed?
   ,mask_not     = c("a","b","ab","aa","bb")   # process components to keep
@@ -122,10 +122,10 @@ serve_slice_model_type(
 
 serve_slice_process_a(
   d             = catalog_spread
-  ,study_name   = "nas"      # name of study
+  ,study_name   = "octo"      # name of study
   ,subgroup     = "male"    # gender : male or female
   ,model_type   = "aehplus"   # target model type used in comparisons
-  ,process_a    = "fev"       # fixed name of process 1
+  ,process_a    = "pef"       # fixed name of process 1
   ,print_config = FALSE       # should configuration be printed?
   ,mask_not     = c("a","aa") # process components to keep
   ,info         = TRUE        # include bivariate correlation section?
@@ -134,10 +134,10 @@ serve_slice_process_a(
 
 
 print_outcome_pairs(
-   d = catalog_spread # transformed catalog
-  ,study               = "nas"                      # name of study
+  d = catalog_spread # transformed catalog
+  ,study               = "eas"                     # name of study
   ,gender              = "male"                    # gender : male or female
-  ,outcome             = "fev"                       # fixed name of process 1
+  ,outcome             = "pef"                       # fixed name of process 1
   ,model_type_standard = "aehplus"                   # compare this type
   ,model_type_set      = c("a","ae","aeh","aehplus") # compare across these models
 )
@@ -217,16 +217,16 @@ catalog_spread %>% view_options(
   ,full_id = F
 )
 catalog_spread %>% view_options(
-   study_name="eas"
+  study_name="eas"
   # ,model_types = c("a")
   ,processes_a = "grip"
   ,processes_b = "logic_tot"
   ,full_id = T
-  )
+)
 # inspect individual models
 catalog_spread %>%
   pull_one_model(
-     study_name_ = "eas"
+    study_name_ = "eas"
     ,subgroup_   = "male"
     ,process_a_  = "pef"
     ,process_b_  =  "fas"
@@ -235,13 +235,13 @@ catalog_spread %>%
 
 # create the baking mix to compare models across model types
 baking_mix <- make_baking_mix_model_type(
-    d            = catalog_spread,
-    study_name_  = "eas",
-    subgroup_    = "female",
-    model_type_  = c("a","ae","aeh","aehplus"),     # pivot
-    process_a    = "pef",
-    process_b    = "block"
-  )
+  d            = catalog_spread,
+  study_name_  = "eas",
+  subgroup_    = "female",
+  model_type_  = c("a","ae","aeh","aehplus"),     # pivot
+  process_a    = "pef",
+  process_b    = "block"
+)
 lapply(baking_mix, names) # one element for each pair with the pivot
 
 # create the baking mix to compare models across outcome pairs
@@ -282,19 +282,19 @@ catalog_spread %>% view_options(
 )
 # inspect individual models
 pull_one_model(catalog_spread
-  ,study_name_ = "eas"
-  ,subgroup_   = "male"
-  ,model_type_ = "aehplus"
-  ,process_a_  = "pef"
-  ,process_b_  =  "block"
+               ,study_name_ = "eas"
+               ,subgroup_   = "male"
+               ,model_type_ = "aehplus"
+               ,process_a_  = "pef"
+               ,process_b_  =  "block"
 )
 
 # create the baking mix for models with a selected pivot
 baking_mix <- make_baking_mix_process_a(d = catalog_spread
-  ,study_name_  = "eas"
-  ,subgroup_    = "female"
-  ,model_type_  = "aehplus"
-  ,process_a    = "pef"   # spread
+                                        ,study_name_  = "eas"
+                                        ,subgroup_    = "female"
+                                        ,model_type_  = "aehplus"
+                                        ,process_a    = "pef"   # spread
 )
 lapply(baking_mix, names) # one element for each pair with the pivot
 # using layers from individual model we now bake the cake
