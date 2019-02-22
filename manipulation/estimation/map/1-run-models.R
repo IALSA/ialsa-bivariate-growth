@@ -110,7 +110,7 @@ wave_set_modeled <-  c(0,1,2,3,4,5,6,7,8,9)
 subset_condition_1 <- "dementia_baseline NE 1" # additional subgroup constraints
 folder_data        = "./data/unshared/derived/map-1" # where data resides
 path_prototype     = "./manipulation/estimation/prototype-wide.inp" # Mplus stencil
-folder_output      = "./output/studies/map/phys-cog/" # where the output will go
+folder_output      = "./model-output/physical-cogntive/studies/map/" # where the output will go
 # folder_data        = "./data/unshared/derived/map"
 # folder_output      = "./output/studies/map/phys-cog/pulmonary"
 
