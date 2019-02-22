@@ -24,7 +24,7 @@ get_id <- function(
   mid$study_name <- subject[[1]][element_number+1] # move one step to the right
 
   # extract model_number from the file path
-  (b <- subject[[1]][length(selector)])
+  (b <- subject[[1]][length(selector)]) # because it is the last
   (b <- strsplit(b, split="_|.out")[[1]])
   (mid$model_number <- b[1])
 
@@ -35,7 +35,7 @@ get_id <- function(
   (mid$model_type  <- b[3])
 
   # extract physical_measure and cognitive_measure from the file path
-  if(length(b)==7L){ # if
+  if(length(b)==7L){ #  7 char is an older way of id a model, obsolete
     (mid$process_a <- b[6])
     (mid$process_b <- b[7])
   }
