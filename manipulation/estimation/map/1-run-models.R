@@ -94,10 +94,10 @@ ls_subgroup = list(
   # ,"unisex" = "unisex"
 )
 ls_model_type <- list(
-  # "a"       = c("age_c70")
+  "a"       = c("age_c70")
   # ,"ae"      = c("age_c70","edu_c7")
   # ,"aeh"     = c("age_c70","edu_c7","htm_c")
-  "aehplus" = c("age_c70","edu_c7","htm_c", "smoke","cardio","diabetes")
+  ,"aehplus" = c("age_c70","edu_c7","htm_c", "smoke","cardio","diabetes")
   # ,"aeplus" = c("age_c70","edu_c7", "smoke","stroke","diabetes")
 )
 
