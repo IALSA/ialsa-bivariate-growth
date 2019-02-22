@@ -6,6 +6,9 @@ source("./scripts/mplus/model-components.R") # organizes variable names
 
 # I. EXTRACTION
 #
+# sample path for testing and development
+path <- list_path_out[["map"]][2]
+
 # I.A. Extrac model identification variables
 get_id <- function(
   path
