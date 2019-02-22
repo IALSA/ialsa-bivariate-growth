@@ -1,0 +1,81 @@
+study_name,process_b,process_b_domain,process_b_domain_new,response,process_b_label,process_b_domain_label
+map,digit_o,working memory,attention and working memory,,Digit Ordering,Attention & Working Memory
+map,digit_b,working memory,attention and working memory,,Digit Span Backward,Attention & Working Memory
+nas,digit_b,working memory,attention and working memory,,Digit Span Backward,Attention & Working Memory
+octo,digit_b,working memory,attention and working memory,,Digit Span Backward,Attention & Working Memory
+satsa,digit_b,working memory,attention and working memory,,Digit Span Backward,Attention & Working Memory
+nas,digit_b_tot,working memory,attention and working memory,,Digit Span Backward Span,Attention & Working Memory
+eas,digit_tot,short-term memory,attention and working memory,,Digit Span Total,Attention & Working Memory
+eas,trailsb,executive function,attention and working memory,,Trials B,Attention & Working Memory
+map,digit_f,attention,attention and working memory,,Digit Span Forward,Attention & Working Memory
+octo,digit_f,attention,attention and working memory,,Digit Span Forward,Attention & Working Memory
+satsa,digit_f,attention,attention and working memory,,Digit Span Forward,Attention & Working Memory
+hrs,serial7,attention,attention and working memory,,Serial 7s,Attention & Working Memory
+map,bstory_de,episodic memory,learning and memory,delayed,Boston Story Delayed,Learning & Memory
+map,logic_de,episodic memory,learning and memory,delayed,Logical Memory Delayed,Learning & Memory
+eas,logic_tot,episodic memory,learning and memory,,Logical Memory Total,Learning & Memory
+elsa,word_de,episodic memory,learning and memory,delayed,Word List Delayed,Learning & Memory
+hrs,word_de,episodic memory,learning and memory,delayed,Word List Delayed,Learning & Memory
+map,word_de,episodic memory,learning and memory,delayed,Word List Delayed,Learning & Memory
+nas,word_de,episodic memory,learning and memory,delayed,Word List Delayed,Learning & Memory
+map,bstory_im,short-term memory,learning and memory,immediate,Boston Story Immediate,Learning & Memory
+satsa,fig_mem,short-term memory,learning and memory,,Figure Memory,Learning & Memory
+map,logic_im,short-term memory,learning and memory,immediate,Logical Memory Immediate,Learning & Memory
+octo,mir,episodic memory,learning and memory,,Objects Recalled,Learning & Memory
+octo,mir_recog,episodic memory,learning and memory,recognition,Objects Recognized,Learning & Memory
+octo,prose_im,short-term memory,learning and memory,immediate,Prose Immediate,Learning & Memory
+eas,word_im,short-term memory,learning and memory,immediate,Word List Immediate,Learning & Memory
+elsa,word_im,short-term memory,learning and memory,immediate,Word List Immediate,Learning & Memory
+hrs,word_im,short-term memory,learning and memory,immediate,Word List Immediate,Learning & Memory
+lasa,word_im,short-term memory,learning and memory,immediate,Word List Immediate,Learning & Memory
+map,word_im,short-term memory,learning and memory,immediate,Word List Immediate,Learning & Memory
+nas,word_im,short-term memory,learning and memory,immediate,Word List Immediate,Learning & Memory
+map,word_rec,episodic memory,learning and memory,delayed,Word Recognition,Learning & Memory
+eas,mmse,mental status,mental status,,Calculated MMSE,Mental Status
+map,ideas,verbal comprehension,mental status,,Ideas,Mental Status
+map,mmse,mental status,mental status,,MMSE,Mental Status
+nas,mmse,mental status,mental status,,MMSE,Mental Status
+nuage,mmms,mental status,mental status,,MMSE,Mental Status
+nuage,mmse,mental status,mental status,,MMSE,Mental Status
+octo,clock,mental status,mental status,,MMSE,Mental Status
+octo,mmse,mental status,mental status,,MMSE,Mental Status
+satsa,mmse,mental status,mental status,,MMSE,Mental Status
+satsa,fig_id,perceptual speed,perceptual reasoning,,Figure Identification,Perceptual Reasoning
+nas,pat_comp,perceptual speed,perceptual reasoning,,Pattern Comparison,Perceptual Reasoning
+eas,block,fluid reasoning,perceptual reasoning,,Block Design,Perceptual Reasoning
+ilse,block,fluid reasoning,perceptual reasoning,,Block Design,Perceptual Reasoning
+octo,block,fluid reasoning,perceptual reasoning,,Block Design,Perceptual Reasoning
+satsa,block,fluid reasoning,perceptual reasoning,,Block Design,Perceptual Reasoning
+satsa,rotate,fluid reasoning,perceptual reasoning,,Card Rotation,Perceptual Reasoning
+nas,fig_copy,fluid reasoning,perceptual reasoning,,Figure Copy,Perceptual Reasoning
+octo,fig_logic,fluid reasoning,perceptual reasoning,,Figure Logic,Perceptual Reasoning
+ilse,spatial_ab,fluid reasoning,perceptual reasoning,,IPSS Spatial Ability,Perceptual Reasoning
+map,line,visual discrimination,perceptual reasoning,,Line Orientation,Perceptual Reasoning
+ilse,piccomp,visual discrimination,perceptual reasoning,,Picture Comletion,Perceptual Reasoning
+lasa,raven_color_ab,fluid reasoning,perceptual reasoning,,Progressive Matrices,Perceptual Reasoning
+map,raven_standard,fluid reasoning,perceptual reasoning,,Progressive Matrices,Perceptual Reasoning
+lasa,letter,perceptual speed,perceptual speed,,Coding,Processing Speed
+map,num_comp,perceptual speed,perceptual speed,,Number Comparison,Processing Speed
+octo,psif,perceptual speed,perceptual speed,,Perceptual Speed,Processing Speed
+eas,symbol,perceptual speed,perceptual speed,,Symbol,Processing Speed
+ilse,symbol,perceptual speed,perceptual speed,,Symbol,Processing Speed
+map,symbol,perceptual speed,perceptual speed,,Symbol,Processing Speed
+octo,symbol,perceptual speed,perceptual speed,,Symbol,Processing Speed
+satsa,symbol,perceptual speed,perceptual speed,,Symbol,Processing Speed
+satsa,analogies,fluid reasoning,verbal ability,,Analogies,Verbal Ability
+nas,animals,fluency,verbal ability,,Animals,Verbal Ability
+eas,bnt,semantic memory,verbal ability,,Boston Naming Test,Verbal Ability
+map,bnt,semantic memory,verbal ability,,Boston Naming Test,Verbal Ability
+eas,categories,fluency,verbal ability,,Categories,Verbal Ability
+map,categories,fluency,verbal ability,,Categories,Verbal Ability
+eas,fas,fluency,verbal ability,,FAS,Verbal Ability
+elsa,fluency,fluency,verbal ability,,Fluency,Verbal Ability
+ilse,fluency,fluency,verbal ability,,Fluency,Verbal Ability
+eas,information,semantic memory,verbal ability,,Information,Verbal Ability
+ilse,waisgeneral,semantic memory,verbal ability,,Information,Verbal Ability
+octo,information,semantic memory,verbal ability,,Information,Verbal Ability
+satsa,information,semantic memory,verbal ability,,Information,Verbal Ability
+map,nart,semantic memory,verbal ability,,NART,Verbal Ability
+octo,synonyms,semantic memory,verbal ability,,Synonyms,Verbal Ability
+satsa,synonyms,semantic memory,verbal ability,,Synonyms,Verbal Ability
+eas,waisvocab,semantic memory,verbal ability,,Vocabulary,Verbal Ability
