@@ -61,12 +61,13 @@ catalog <- readr::read_csv(paste0(path_input,".csv"),col_names = TRUE)
 
 # ---- tweak-data --------------------------------------------------------------
 colnames(catalog)
-ds <- catalog %>% dplyr::arrange_("model_type", "process_a") %>%
+# create a quick view into the available models
+d <- catalog %>% dplyr::arrange_("model_type", "process_a") %>%
   dplyr::select_("study_name", "model_number","subgroup","model_type","process_a", "process_b")
 # assign an alias for quick reference in this script
 ds <- catalog
 # ----- load-rename-classify-mapping -------------------------------------
-ds_rules <- read.csv("./data/public/raw/rename-classify-rules.csv", stringsAsFactors = F) %>%
+ds_rules <- read.csv("./data/shared/raw/rename-classify-rules.csv", stringsAsFactors = F) %>%
   dplyr::select(-notes,-mplus_name)
 
 
