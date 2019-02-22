@@ -65,7 +65,7 @@ get_msum <- function(
                   "Parameters",
                   "LL","AIC","BIC","aBIC","AICC",
                   "Filename")
-  # Create data frame to populated from model output files
+  # Create data frame to be populate from model output files
   msum <- data.frame(matrix(ncol=length(msum_names)))
   names(msum) <- msum_names # columns is what we want
   msum
