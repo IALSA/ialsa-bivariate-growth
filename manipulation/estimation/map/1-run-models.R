@@ -100,8 +100,8 @@ ls_model_type <- list(
   ,"aehplus" = c("age_c70","edu_c7","htm_c", "smoke","cardio","diabetes")
   # ,"aeplus" = c("age_c70","edu_c7", "smoke","stroke","diabetes")
 )
-# joey 
-# andriy
+
+
 ############################################################ GRIP #####
 ## @knitr dummy_1
 # Use the first example as the template for further pairs
